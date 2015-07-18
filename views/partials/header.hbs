@@ -1,0 +1,14 @@
+<header class="header-main">
+  <div class="container container--header">
+    <nav class="nav-main">
+      <ul class="nav-main__left">
+        <h1 class="nav-main__app-title animated fadeInDown"><a href="/">{{pkg.name}}</a></h1>
+      </ul>
+      {{#if req.user}}
+      <ul class="nav-main__right">
+        <li><a href="/logout">Logout</a></li>
+      </ul>
+      {{/if}}
+    </nav>
+  </div>
+</header>

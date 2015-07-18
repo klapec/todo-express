@@ -1,0 +1,81 @@
+.container--auth {
+  background-color: $color-background-light-primary;
+  margin-top: 4em;
+  align-self: center;
+  box-shadow: $shadow;
+}
+
+.auth-form {
+  padding-top: 1em;
+}
+
+.auth-form__error-list {
+  margin: 0 0 2em;
+}
+
+.auth-form__error {
+  display: block;
+  color: $color-basic-error;
+}
+
+.auth-input {
+  display: block;
+  margin-bottom: 1em;
+  border-width: 0 0 2px;
+  padding: .5em;
+}
+
+.auth-input--email,
+.auth-input--password {
+  width: 20em;
+}
+
+.auth-input--submit {
+  background: none;
+  border: 0;
+  text-transform: uppercase;
+  color: $color-basic-info;
+  font-weight: 500;
+  padding: 0;
+  margin-top: 3em;
+}
+
+.auth-alt-link {
+  color: $color-text-dark-secondary;
+}
+
+.auth-hint {
+  color: $color-text-dark-hints;
+}
+
+
+
+/****************************************************
+*  Media queries
+*/
+
+@include media('<=desktop') {
+  .auth-input--email,
+  .auth-input--password {
+    width: 100%;
+  }
+}
+
+@include media('>=tablet') {
+  .container--auth {
+    width: 40em;
+  }
+}
+
+@include media('>=desktop') {
+  .container--auth {
+    width: 50em;
+  }
+}
+
+@include media('<tablet') {
+  .container--auth {
+    width: 100%;
+    margin: 0;
+  }
+}

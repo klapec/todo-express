@@ -1,0 +1,44 @@
+.add-task {
+  background-color: $color-primary;
+}
+
+.container--add-task {
+  padding: 3em 2em;
+  display: flex;
+  flex-grow: 1;
+}
+
+.add-task__name {
+  flex-grow: 1;
+  color: $color-text-light-primary;
+  background-color: $color-primary;
+  border-color: $color-background-light-dividers;
+  border-width: 0 0 2px;
+  padding: .5em;
+
+  &::placeholder {
+    color: $color-text-light-hints;
+  }
+}
+
+.add-task__button {
+  border: 0;
+  background-color: $color-accent;
+  color: $color-background-light-primary;
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: .8em 2em;
+  font-size: .8em;
+  margin-left: 2em;
+}
+
+
+/****************************************************
+*  Media queries
+*/
+
+@include media('<=tablet') {
+  .container--add-task {
+    padding: 2em;
+  }
+}

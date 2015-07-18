@@ -1,0 +1,24 @@
+{
+  "name": "express-todo",
+  "version": "0.1.0",
+  "homepage": "https://github.com/klapec/express-todo",
+  "authors": [
+    "Andrzej Kłapeć <andrzej.klapec@gmail.com>"
+  ],
+  "main": "bootstrap.js",
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "normalize.css": "~3.0.3",
+    "include-media": "~1.1.2"
+  }
+}

@@ -1,0 +1,22 @@
+<div class="container container--auth animated fadeIn">
+  <h1>Sign up</h1>
+  <form action="/signup" method="post" class="auth-form">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{#if error}}
+      {{#each error.errors}}
+        {{#if @first}}
+          <ul class="auth-form__error-list">
+        {{/if}}
+          <li class="auth-form__error">{{ message }}</li>
+        {{#if @last}}
+          </ul>
+        {{/if}}
+      {{/each}}
+    {{/if}}
+    <input class="auth-input auth-input--email" type="email" name="email" {{#if user.email}} value="{{user.email}}" {{/if}} placeholder="Email address" required autofocus>
+    <input class="auth-input auth-input--password" type="password" name="password" placeholder="Password" required>
+    <input class="auth-input auth-input--password" type="password" name="passwordConfirmation" placeholder="Confirm password" required>
+    <input class="auth-input auth-input--submit" type="submit" value="Sign up">
+  </form>
+  <a class="auth-alt-link" href="/login">Log in instead?</a>
+</div>

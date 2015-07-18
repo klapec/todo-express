@@ -1,0 +1,21 @@
+.header-main {
+  background-color: $color-primary-dark;
+  color: $color-text-light-primary;
+}
+
+.container--header {
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+/****************************************************
+*  Media queries
+*/
+
+@include media('<=tablet') {
+  .container--header {
+    padding: 1em 2em;
+  }
+}

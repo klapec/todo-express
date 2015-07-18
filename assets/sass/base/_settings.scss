@@ -1,0 +1,79 @@
+/****************************************************
+*  Settings
+*/
+
+/****************************************************
+*  Typography
+*/
+
+/* Fontfaces */
+$font-family: 'Roboto', sans-serif;
+
+/* Font sizes */
+$font-size-base: 1em;
+$font-size-h1: $font-size-base * 2.25;
+$font-size-h2: $font-size-base * 1.6;
+$font-size-h3: $font-size-base * 1.3;
+$font-size-h4: $font-size-base * .8;
+$font-size-small: $font-size-base * .8;
+
+
+/* Line height */
+$line-height-base: 1.5;
+$line-height-header: 1.25;
+
+
+
+/****************************************************
+*  Colors
+*/
+
+/*
+  Palette
+ */
+
+/* Basic colors */
+$color-basic-info: #2196F3;
+$color-basic-success: #4CAF50;
+$color-basic-error: #F44336;
+
+/* Primary colors */
+$color-primary-light: #C5CAE9;
+$color-primary: #3F51B5;
+$color-primary-dark: #303F9F;
+
+/* Accent colors */
+$color-accent-light: #FF80AB;
+$color-accent: #FF4081;
+$color-accent-dark: #F50057;
+
+/* Background colors */
+$color-background-light-primary: rgba(255, 255, 255, 1);
+$color-background-light-secondary: rgba(255, 255, 255, .70);
+$color-background-light-disabled: rgba(255, 255, 255, .30);
+$color-background-light-dividers: rgba(255, 255, 255, .12);
+
+$color-background-dark-primary: rgba(0, 0, 0, .87);
+$color-background-dark-secondary: rgba(0, 0, 0, .54);
+$color-background-dark-disabled: rgba(0, 0, 0, .26);
+$color-background-dark-dividers: rgba(0, 0, 0, .12);
+
+/* Text colors */
+$color-text-light-primary: $color-background-light-primary;
+$color-text-light-secondary: $color-background-light-secondary;
+$color-text-light-hints: $color-background-light-disabled;
+
+$color-text-dark-primary: $color-background-dark-primary;
+$color-text-dark-secondary: $color-background-dark-secondary;
+$color-text-dark-hints: $color-background-dark-disabled;
+
+/* Misc */
+$color-transparent: rgba(255, 255, 255, 0);
+$color-body-background: #EEE;
+
+
+/****************************************************
+*  Misc
+*/
+
+$shadow: 0 1.5px 4px $color-background-dark-disabled;

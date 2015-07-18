@@ -1,0 +1,14 @@
+<div class="container container--auth animated fadeIn">
+  <h1>Log in</h1>
+  <form action="/login" method="post" class="auth-form">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    {{#if message}}
+      <p class="auth-form__error-list auth-form__error">{{ message }}</p>
+    {{/if}}
+    <input class="auth-input auth-input--email" type="email" name="email" {{#if req.login.email}} value="{{req.login.email}}" {{/if}} placeholder="Email address" autofocus>
+    <input class="auth-input auth-input--password" type="password" name="password" placeholder="Password">
+    <input class="auth-input auth-input--submit" type="submit" value="Log in">
+  </form>
+  <a class="auth-alt-link" href="/signup">Not registered?</a>
+  <p class="auth-hint">You may also use the test account – email: test@gmail password: test</p>
+</div>

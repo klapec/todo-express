@@ -1,0 +1,151 @@
+.container--task-list {
+  background-color: $color-background-light-primary;
+  box-shadow: 0 1.5px 4px $color-background-dark-disabled;
+}
+
+.task-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    display: inline;
+  }
+}
+
+.task-counter {
+  font-weight: 100;
+}
+
+.clear-completed {
+  margin-left: 1em;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.task-list {
+  padding: 1em;
+  width: 100%;
+}
+
+.task-list__item {
+  display: flex;
+}
+
+.task-list__item.editing .task-list__item--view {
+  display: none;
+}
+
+.task-list__item.editing .task-list__item--edit {
+  padding-left: 3em;
+  padding-top: 1.2em;
+  border: none;
+}
+
+.task-list__item--view {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+}
+
+.task-list__item__name, .task-list__item--edit {
+  flex-grow: 1;
+  padding: 1em 2em;
+  word-break: break-all;
+}
+
+.task-list__item__toggle {
+  position: relative;
+  margin-right: 2em;
+  top: -0.8em; // magic number
+  cursor: pointer;
+
+  &:before {
+    transition: all 0.3s ease-in-out;
+    content: "";
+    position: absolute;
+    width: 1.5em;
+    height: 1.5em;
+    border: 2px solid $color-primary-light;
+  }
+
+  &.checked:before {
+    transform: rotate(-45deg);
+    height: .7em; // magic number once again
+    border-color: $color-primary;
+    border-top-style: none;
+    border-right-style: none;
+  }
+
+  &:after {
+    content: "";
+    width: 1em;
+    height: 1em;
+    background: $color-background-light-primary;
+    cursor: pointer;
+  }
+}
+
+.task-list__item__delete {
+  padding: 0;
+  border: 0;
+  background: none;
+  outline: none;
+  min-width: 1em;
+  min-height: 1em;
+  font-size: 2em;
+  color: $color-accent-light;
+  transition: color 0.3s ease-in-out;
+
+  &:after {
+    content: '×';
+  }
+
+  &:hover {
+    color: $color-accent-dark;
+  }
+}
+
+
+
+/****************************************************
+*  Media queries
+*/
+
+@include media('<=tablet') {
+  .container--task-list {
+    margin: 0;
+    width: 100%;
+  }
+
+  .task-list__item__name {
+    padding: 1em;
+  }
+}
+
+@include media('<tablet') {
+  .task-list {
+    padding: 0;
+  }
+
+  .task-list-header {
+    padding-bottom: 2em;
+  }
+
+  .task-counter {
+    margin-right: 1em;
+  }
+
+  .clear-completed {
+    margin-left: 0;
+  }
+}

@@ -1,0 +1,36 @@
+<div class="add-task">
+  <div class="container container--add-task">
+    <input type="text" placeholder="Task name" class="add-task__name" autofocus>
+    <button class="add-task__button">Add</button>
+  </div>
+</div>
+<div class="container container--task-list">
+  <div class="task-list-header">
+    <h1>Tasks</h1>
+    <div>
+      <span class="task-counter"></span>
+      <span class="clear-completed">Clear completed</span>
+    </div>
+  </div>
+  <div class="task-list__error" style="display: {{#if err}}block{{else}}none{{/if}}">
+    <h3>Error</h3>
+    <p>Something wrong happened. I'm working on it.</p>
+    <p>For now, try refreshing the page.</p>
+  </div>
+  <ul class="task-list">
+    {{#if tasks}}
+      {{#each tasks}}
+        <li class="task-list__item {{#if completed}}completed{{/if}}" data-id="{{_id}}">
+          <div class="task-list__item--view">
+            <!-- The reason this is a span and not a checkbox input
+            is that styling input elements is rather quirky
+            on non-webkit browsers -->
+            <span class="task-list__item__toggle {{#if completed}}checked{{/if}}"></span>
+            <label class="task-list__item__name">{{name}}</label>
+            <button class="task-list__item__delete"></button>
+          </div>
+        </li>
+      {{/each}}
+    </ul>
+    {{/if}}
+</div>

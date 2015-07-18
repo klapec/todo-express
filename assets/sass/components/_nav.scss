@@ -1,0 +1,28 @@
+.nav-main {
+  display: flex;
+  justify-content: space-between;
+
+  ul {
+    display: flex;
+    align-items: center;
+  }
+
+  li {
+    margin-left: 2em;
+  }
+
+  a {
+    color: $color-text-light-primary;
+  }
+}
+
+.nav-main__app-title {
+  display: inline-block;
+  margin-right: 1em;
+}
+
+
+
+/****************************************************
+*  Media queries
+*/

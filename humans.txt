@@ -1,0 +1,10 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+  Andrzej Kłapeć -- creator -- @klapec_
+
+# TECHNOLOGY COLOPHON
+
+  HTML5, CSS3, JavaScript, Sass, Node.js, Express, Mongoose, Mongo, Passport, Handlebars, Gulp, Babel
