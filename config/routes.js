@@ -4,7 +4,7 @@ import * as userCtrl from '../controllers/userCtrl';
 import taskCtrl from '../controllers/taskCtrl';
 import auth from '../middleware/auth';
 
-export default (app) => {
+export default app => {
   const csrfProtection = csrf({ cookie: true });
 
   app.use((req, res, next) => {
@@ -33,7 +33,23 @@ export default (app) => {
   app.put('/tasks/:id', auth.requiresLogin, taskCtrl.update);
   app.delete('/tasks/:id', auth.requiresLogin, taskCtrl.remove);
 
+  app.use((err, req, res, next) => {
+    if (res.headersSent) {
+      return next(err);
+    }
+    if (err.code === 'EBADCSRFTOKEN') {
+      res.status(403);
+      return res.render('error', { err });
+    }
+
+    res.status(500);
+    res.render('error', { err });
+  });
+
   app.use((req, res) => {
-    res.status(404).render('404');
+    res.status(404);
+    res.render('error', {
+      err: '404 Not Found'
+    });
   });
 };

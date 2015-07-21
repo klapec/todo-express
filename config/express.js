@@ -14,7 +14,7 @@ import pkg from '../package.json';
 const MongoStore = require('connect-mongo')(session);
 const env = process.env.NODE_ENV || 'development';
 
-export default (app) => {
+export default app => {
   app.use(express.static(config.root + '/public'));
 
   if (env === 'production') {
@@ -23,8 +23,8 @@ export default (app) => {
     app.set('trust proxy', 1);
     // Log HTTP requests to access.log
     app.use(morgan('combined', {stream: accessLogStream}));
-  } else {
-    // Log HTTP requests to console on development/testing env
+  } else if (env === 'development') {
+    // Log HTTP requests to console on development
     app.use(morgan('dev'));
   }
 

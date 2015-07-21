@@ -21,7 +21,7 @@ if (env === 'production') {
       tailable: true
     })
   );
-} else {
+} else if (env === 'development') {
   transports.push(
     new winston.transports.Console({
       level: 'info',

@@ -43,7 +43,7 @@ const signup = {
         });
       }
 
-      req.login(user, (err) => {
+      req.login(user, err => {
         if (err) logger.error(err);
         return res.redirect('/tasks');
       });

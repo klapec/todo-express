@@ -1,4 +1,3 @@
-// TODO: Handle errors
 import mongoose from 'mongoose';
 import logger from '../helpers/logger';
 
@@ -27,7 +26,7 @@ const tasks = {
       createdOn: new Date()
     });
 
-    newTask.save((err) => {
+    newTask.save(err => {
       if (err) {
         logger.error(err);
         return res.send({ err });
@@ -43,7 +42,7 @@ const tasks = {
       Task.findOneAndUpdate(
         { _id: req.params.id },
         { completed: req.body.completed },
-        (err) => {
+        err => {
           if (err) {
             logger.error(err);
             return res.send({ err });
@@ -57,7 +56,7 @@ const tasks = {
       Task.findOneAndUpdate(
         { _id: req.params.id },
         { name: req.body.title },
-        (err) => {
+        err => {
           if (err) {
             logger.error(err);
             return res.send({ err });
@@ -77,7 +76,7 @@ const tasks = {
 
     if (req.params.id.search(/&/) !== -1) {
       const arr = req.params.id.split('&');
-      arr.forEach((v) => {
+      arr.forEach(v => {
         query.push(v);
       });
     } else {
@@ -85,10 +84,10 @@ const tasks = {
     }
 
     function removeAll(cb) {
-      query.forEach((v) => {
+      query.forEach(v => {
         Task.findByIdAndRemove(
           v,
-          (err) => {
+          err => {
             if (err) {
               logger.error(err);
               return cb({ err });
@@ -99,7 +98,7 @@ const tasks = {
       cb({ query });
     }
 
-    removeAll((arg) => {
+    removeAll(arg => {
       return res.send({
         err: arg.err,
         query: arg.query

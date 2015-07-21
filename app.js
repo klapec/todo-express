@@ -37,3 +37,5 @@ app.listen(port, () => {
   logger.info(`Server listening on port: ${port}`);
   logger.info(`Environment: ${process.env.NODE_ENV}`);
 });
+
+export default app;

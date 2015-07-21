@@ -8,21 +8,21 @@ export default class Controller {
     // Checking if the task-list element exists = we're on /tasks
     if (this.view.taskList) {
       this.view.bind('init');
-      this.view.bind('addTask', (opts) => {
+      this.view.bind('addTask', opts => {
         this.addTask(opts.title);
       });
       this.view.bind('editTask');
-      this.view.bind('editTaskDone', (opts) => {
+      this.view.bind('editTaskDone', opts => {
         this.editTaskDone(opts.id, opts.title, opts.oldVal);
       });
       this.view.bind('editTaskCancel');
-      this.view.bind('removeTask', (opts) => {
+      this.view.bind('removeTask', opts => {
         this.removeTask(opts);
       });
-      this.view.bind('toggleTask', (opts) => {
+      this.view.bind('toggleTask', opts => {
         this.toggleTask(opts.id, opts.completed);
       });
-      this.view.bind('removeCompleted', (opts) => {
+      this.view.bind('removeCompleted', opts => {
         this.removeTask(opts);
       });
     }
@@ -66,7 +66,7 @@ export default class Controller {
 
     if (opts.completed) {
       const arr = [];
-      Array.prototype.forEach.call(opts.completed, (v) => {
+      Array.prototype.forEach.call(opts.completed, v => {
         arr.push(v.dataset.id);
       });
       query = arr.join('&');

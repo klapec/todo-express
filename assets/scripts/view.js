@@ -18,7 +18,7 @@ const parent = function parent(element, tagName) {
 
 const on = (target, type, callback, useCapture) => {
   if (typeof type == 'object') {
-    type.forEach((v) => {
+    type.forEach(v => {
       target.addEventListener(v, callback, !!useCapture);
     });
   } else {
@@ -178,7 +178,7 @@ export default class View {
     // except on the first render ('init')
     // and when adding a new task ('addTask')
     if (!listItem && !(cmd === 'init' || 'addTask')) {
-      return;
+      return false;
     }
 
     // Display error when receiving an error, do nothing else
@@ -237,7 +237,7 @@ export default class View {
       },
 
       removeTask() {
-        opts.query.forEach((v) => {
+        opts.query.forEach(v => {
           const item = qs(`[data-id="${v}"]`);
           self.taskList.removeChild(item);
         });
