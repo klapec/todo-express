@@ -309,5 +309,6 @@ describe('Backend', () => {
   after(() => {
     mongoose.connection.db.dropCollection('tasks');
     mongoose.connection.db.dropCollection('users');
+    mongoose.connection.db.dropCollection('sessions');
   });
 });
