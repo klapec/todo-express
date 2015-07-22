@@ -16,7 +16,6 @@ const agent = request.agent(app);
 const Task = mongoose.model('Task');
 const User = mongoose.model('User');
 
-let testUser;
 let taskCount;
 const testTasks = [];
 
@@ -300,8 +299,7 @@ describe('Backend', () => {
 
   describe('404', () => {
     it('should return 404', done => {
-      request(app)
-        .get('/foobar')
+      agent.get('/foobar')
         .expect(404, done);
     });
   });
