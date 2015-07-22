@@ -1,6 +1,11 @@
+/* eslint no-unused-expressions:0 */
+
 import request from 'supertest';
 import jsdom from 'jsdom';
+import chai from 'chai';
 import app from '../app';
+
+const expect = chai.expect;
 
 describe('Route', () => {
   describe('GET /', () => {
@@ -18,6 +23,52 @@ describe('Route', () => {
         .post('/')
         .send({ foo: 'bar' })
         .expect(404, done);
+    });
+  });
+
+  describe('GET /signup', () => {
+    it('should render the signup page', done => {
+      request(app)
+        .get('/signup')
+        .expect('Content-Type', 'text/html; charset=utf-8')
+        .expect(200, done);
+    });
+  });
+
+  describe('POST /signup', () => {
+    describe('with invalid CSRF', () => {
+      it('should return 403', done => {
+        request(app)
+          .post('/signup')
+          .send({ foo: 'bar' })
+          .expect(403, done);
+      });
+    });
+
+    describe('with valid CSRF', () => {
+      it('should redirect to /tasks', done => {
+        request(app)
+          .get('/signup')
+          .end((err, res) => {
+            if (err) return false;
+
+            jsdom.env(res.text, (errors, window) => {
+              const csrf = window.document.querySelector('input[name="_csrf"]').value;
+
+              request(app)
+                .post('/signup')
+                .set('cookie', res.headers['set-cookie'])
+                .send({
+                  _csrf: csrf,
+                  email: 'test@gmail.com',
+                  password: 'test',
+                  passwordConfirmation: 'test'
+                })
+                .expect('Location', '/tasks')
+                .expect(302, done);
+            });
+          });
+      });
     });
   });
 
@@ -46,6 +97,8 @@ describe('Route', () => {
           .get('/login')
           .end((err, res) => {
 
+            expect(err).to.not.exist;
+
             jsdom.env(res.text, (errors, window) => {
               const csrf = window.document.querySelector('input[name="_csrf"]').value;
 
@@ -71,50 +124,6 @@ describe('Route', () => {
         .get('/logout')
         .expect('Location', '/')
         .expect(302, done);
-    });
-  });
-
-  describe('GET /signup', () => {
-    it('should render the signup page', done => {
-      request(app)
-        .get('/signup')
-        .expect('Content-Type', 'text/html; charset=utf-8')
-        .expect(200, done);
-    });
-  });
-
-  describe('POST /signup', () => {
-    describe('with invalid CSRF', () => {
-      it('should return 403', done => {
-        request(app)
-          .post('/signup')
-          .send({ foo: 'bar' })
-          .expect(403, done);
-      });
-    });
-
-    describe('with valid CSRF', () => {
-      it('should return 200', done => {
-        request(app)
-          .get('/signup')
-          .end((err, res) => {
-
-            jsdom.env(res.text, (errors, window) => {
-              const csrf = window.document.querySelector('input[name="_csrf"]').value;
-
-              request(app)
-                .post('/signup')
-                .set('cookie', res.headers['set-cookie'])
-                .send({
-                  _csrf: csrf,
-                  email: 'test@gmail.com',
-                  password: 'test',
-                  passwordConfirmation: 'test'
-                })
-                .expect(200, done);
-            });
-          });
-      });
     });
   });
 
@@ -161,5 +170,4 @@ describe('Route', () => {
         .expect(404, done);
     });
   });
-
 });

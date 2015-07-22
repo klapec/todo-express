@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "start": "NODE_ENV=production node bootstrap.js",
-    "test": "NODE_ENV=test ./node_modules/.bin/mocha --compilers js:babel/register --reporter spec --timeout 10000 tests/routes.js"
+    "test": "NODE_ENV=test ./node_modules/.bin/mocha --compilers js:babel/register --reporter spec --timeout 10000 tests/*.js"
   },
   "author": "Andrzej Kłapeć",
   "license": "MIT",

@@ -42,13 +42,14 @@ const tasks = {
       Task.findOneAndUpdate(
         { _id: req.params.id },
         { completed: req.body.completed },
-        err => {
+        { 'new': true },
+        (err, task) => {
           if (err) {
             logger.error(err);
             return res.send({ err });
           }
           res.send({
-            completed: req.body.completed
+            completed: task.completed
           });
         }
       );

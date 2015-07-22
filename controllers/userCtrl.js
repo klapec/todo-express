@@ -38,6 +38,7 @@ const signup = {
         logger.error(err);
         return res.render('users/signup', {
           error: err,
+          csrfToken: req.csrfToken(),
           user: newUser,
           title: 'Sign up'
         });
