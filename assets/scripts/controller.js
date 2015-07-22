@@ -89,7 +89,7 @@ export default class Controller {
       const response = JSON.parse(res);
       self.view.render('toggleTask', {
         err: response.err,
-        id,
+        response: id,
         completed: response.completed
       });
     });

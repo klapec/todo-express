@@ -52,10 +52,4 @@ const signup = {
   }
 };
 
-const userId = {
-  get(req, res) {
-    res.render('users/profile');
-  }
-};
-
-export { login, logout, signup, userId };
+export { login, logout, signup };

@@ -49,6 +49,7 @@ const tasks = {
             return res.send({ err });
           }
           res.send({
+            id: task._id,
             completed: task.completed
           });
         }
@@ -57,14 +58,15 @@ const tasks = {
       Task.findOneAndUpdate(
         { _id: req.params.id },
         { name: req.body.title },
-        err => {
+        { 'new': true },
+        (err, task) => {
           if (err) {
             logger.error(err);
             return res.send({ err });
           }
           res.send({
-            id: req.params.id,
-            title: req.body.title
+            id: task._id,
+            title: task.name
           });
         }
       );
