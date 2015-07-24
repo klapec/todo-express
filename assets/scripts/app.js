@@ -1,3 +1,6 @@
+// Instantiates a new todo object and binds
+// the event handlers
+
 import Model from './model';
 import View from './view';
 import Controller from './controller';

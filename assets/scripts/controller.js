@@ -5,34 +5,37 @@ export default class Controller {
   }
 
   bindAll() {
-    // Checking if the task-list element exists = we're on /tasks
+    // Checking if the task-list element exists === we're on /tasks
     if (this.view.taskList) {
       this.view.bind('init');
-      this.view.bind('addTask', opts => {
-        this.addTask(opts.title);
+      this.view.bind('addTask', args => {
+        this.addTask(args.title);
       });
       this.view.bind('editTask');
-      this.view.bind('editTaskDone', opts => {
-        this.editTaskDone(opts.id, opts.title, opts.oldVal);
+      this.view.bind('editTaskDone', args => {
+        this.editTaskDone(args.id, args.title, args.oldVal);
       });
       this.view.bind('editTaskCancel');
-      this.view.bind('removeTask', opts => {
-        this.removeTask(opts);
+      this.view.bind('removeTask', args => {
+        this.removeTask(args);
       });
-      this.view.bind('toggleTask', opts => {
-        this.toggleTask(opts.id, opts.completed);
+      this.view.bind('toggleTask', args => {
+        this.toggleTask(args.id, args.completed);
       });
-      this.view.bind('removeCompleted', opts => {
-        this.removeTask(opts);
+      this.view.bind('removeCompleted', args => {
+        this.removeTask(args);
       });
     }
   }
 
   addTask(title) {
+    // Checks for empty input
     if (title.trim() === '') {
       return;
     }
 
+    // Sends the task title to the model
+    // receives task id and title from the DB if the request was successful
     this.model.create(title, res => {
       const response = JSON.parse(res);
       this.view.render('addTask', {
@@ -43,7 +46,9 @@ export default class Controller {
     });
   }
 
+  // Invoked when the editing has finished
   editTaskDone(id, title, oldVal) {
+    // Checks if the input isn't empty and if it actually changed
     if (title.trim() && title !== oldVal) {
       this.model.update(id, { title }, res => {
         const response = JSON.parse(res);
@@ -53,22 +58,32 @@ export default class Controller {
           title: response.title
         });
       });
+    // Otherwise returns the old value to the View
     } else {
       this.view.render('editTaskDone', { id, title: oldVal });
     }
   }
 
-  removeTask(opts) {
+  // Used to remove either singular tasks by their id
+  // or multiple completed tasks
+  removeTask(args) {
     let query = '';
 
-    if (opts.completed) {
+    // Checks whether the args object has a completed property
+    // which would indicate that we wan't to remove multiple
+    // completed tasks
+    if (args.completed) {
       const arr = [];
-      Array.prototype.forEach.call(opts.completed, v => {
+      Array.prototype.forEach.call(args.completed, v => {
+        // Pushes ids of the completed tasks to an array
         arr.push(v.dataset.id);
       });
+      // Stringifies the array into a query, separating array items
+      // with an ampersand
       query = arr.join('&');
+    // Otherwise, we wan't to remove a single task
     } else {
-      query = opts.id;
+      query = args.id;
     }
 
     this.model.remove(query, res => {
@@ -80,12 +95,14 @@ export default class Controller {
     });
   }
 
+  // Toggles the completed parameter of a task
+  // which can be either true or false
   toggleTask(id, completed) {
     this.model.update(id, { completed }, res => {
       const response = JSON.parse(res);
       this.view.render('toggleTask', {
         err: response.err,
-        response: id,
+        id: response.id,
         completed: response.completed
       });
     });

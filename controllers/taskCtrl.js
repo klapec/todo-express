@@ -3,7 +3,10 @@ import logger from '../helpers/logger';
 
 const Task = mongoose.model('Task');
 const tasks = {
+
   // Initial server render
+  // Gets all the tasks created by the current user from the DB
+  // and sends them to the template
   get(req, res) {
     Task.find(
       { createdBy: req.user._id },
@@ -19,6 +22,8 @@ const tasks = {
     );
   },
 
+  // Creates a new task, receives an object with the title property
+  // Takes the user id from the req object
   create(req, res) {
     const newTask = new Task({
       name: req.body.title,
@@ -31,13 +36,18 @@ const tasks = {
         logger.error(err);
         return res.send({ err });
       }
+      // Sends back ID of the new task
       return res.send({
         id: newTask._id
       });
     });
   },
 
+  // Updates the task - whether by its name
+  // or the completion parameter (true/false)
   update(req, res) {
+    // Checks for the completed property
+    // Uses the undefined type as the property could be false
     if (req.body.completed !== undefined) {
       Task.findOneAndUpdate(
         { _id: req.params.id },
@@ -54,6 +64,8 @@ const tasks = {
           });
         }
       );
+    // If the completed property doesn't exist, update the task
+    // with the specified name
     } else {
       Task.findOneAndUpdate(
         { _id: req.params.id },
@@ -73,20 +85,26 @@ const tasks = {
     }
   },
 
+  // Removes task/s specified as the request parameter
   remove(req, res) {
     const params = req.params.id;
     const query = [];
 
+    // Checks whether the id parameter contains any ampersands
+    // which would mean we're trying to remove multiple tasks
     if (req.params.id.search(/&/) !== -1) {
+      // Splits the query into an array
       const arr = req.params.id.split('&');
       arr.forEach(v => {
         query.push(v);
       });
+    // Otherwise the parameter must contain a single task ID
     } else {
       query.push(params);
     }
 
     function removeAll(cb) {
+      // Remove every single ID from the query array
       query.forEach(v => {
         Task.findByIdAndRemove(
           v,
