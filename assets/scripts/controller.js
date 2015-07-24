@@ -33,10 +33,9 @@ export default class Controller {
       return;
     }
 
-    const self = this;
-    self.model.create(title, function(res) {
+    this.model.create(title, res => {
       const response = JSON.parse(res);
-      self.view.render('addTask', {
+      this.view.render('addTask', {
         err: response.err,
         id: response.id,
         title
@@ -45,23 +44,21 @@ export default class Controller {
   }
 
   editTaskDone(id, title, oldVal) {
-    const self = this;
     if (title.trim() && title !== oldVal) {
-      self.model.update(id, { title }, function(res) {
+      this.model.update(id, { title }, res => {
         const response = JSON.parse(res);
-        self.view.render('editTaskDone', {
+        this.view.render('editTaskDone', {
           err: response.err,
           id: response.id,
           title: response.title
         });
       });
     } else {
-      self.view.render('editTaskDone', { id, title: oldVal });
+      this.view.render('editTaskDone', { id, title: oldVal });
     }
   }
 
   removeTask(opts) {
-    const self = this;
     let query = '';
 
     if (opts.completed) {
@@ -74,9 +71,9 @@ export default class Controller {
       query = opts.id;
     }
 
-    self.model.remove(query, function(res) {
+    this.model.remove(query, res => {
       const response = JSON.parse(res);
-      self.view.render('removeTask', {
+      this.view.render('removeTask', {
         err: response.err,
         query: response.query
       });
@@ -84,10 +81,9 @@ export default class Controller {
   }
 
   toggleTask(id, completed) {
-    const self = this;
-    self.model.update(id, { completed }, function(res) {
+    this.model.update(id, { completed }, res => {
       const response = JSON.parse(res);
-      self.view.render('toggleTask', {
+      this.view.render('toggleTask', {
         err: response.err,
         response: id,
         completed: response.completed
