@@ -1,3 +1,7 @@
+// User mongoose model
+//
+// Does the login/signup input validation
+
 import mongoose from 'mongoose';
 import crypto from 'crypto';
 import logger from '../helpers/logger';

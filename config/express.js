@@ -1,3 +1,5 @@
+// Main express config
+
 import fs from 'fs';
 import path from 'path';
 import express from 'express';
@@ -8,14 +10,14 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import exphbs from 'express-handlebars';
 import flash from 'connect-flash';
-import config from '../config/config';
+import mongoConfig from '../config/mongo';
 import pkg from '../package.json';
 
 const MongoStore = require('connect-mongo')(session);
 const env = process.env.NODE_ENV || 'development';
 
 export default app => {
-  app.use(express.static(config.root + '/public'));
+  app.use(express.static(path.resolve(__dirname, '..', 'public')));
 
   if (env === 'production') {
     const accessLogStream = fs.createWriteStream(path.resolve('logs/access.log'), {flags: 'a'});
@@ -54,7 +56,7 @@ export default app => {
       maxAge: 86400000 // 24 hours
     },
     store: new MongoStore({
-      url: config.db,
+      url: process.env.MONGOURI || mongoConfig.uri,
       collection: 'sessions'
     })
   }));

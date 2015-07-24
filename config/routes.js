@@ -1,6 +1,6 @@
 import passport from 'passport';
 import csrf from 'csurf';
-import * as userCtrl from '../controllers/userCtrl';
+import userCtrl from '../controllers/userCtrl';
 import taskCtrl from '../controllers/taskCtrl';
 import auth from '../middleware/auth';
 
@@ -12,6 +12,8 @@ export default app => {
     next();
   });
 
+  // Checks whether the user is authenticated, if so - redirects to /tasks
+  // Otherwise redirects to /login
   app.get('/', auth.requiresLogin, (req, res) => {
     res.redirect('/tasks');
   });

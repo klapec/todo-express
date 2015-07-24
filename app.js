@@ -1,13 +1,14 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import logger from './helpers/logger';
-import config from './config/config';
+import mongoConfig from './config/mongo';
 
 const app = express();
 const port = process.env.PORT || 3000;
+const mongoUri = process.env.MONGOURI || mongoConfig.uri;
 
 const connect = () => {
-  mongoose.connect(config.db, {server: {socketOptions: {keepAlive: 1}}});
+  mongoose.connect(mongoUri, {server: {socketOptions: {keepAlive: 1}}});
 };
 connect();
 
@@ -16,7 +17,7 @@ const db = mongoose.connection;
 db.on('connected', () => {
   logger.info('Connected to the database');
 });
-db.on('error', (err) => {
+db.on('error', err => {
   logger.info(`Error connecting to database ${err}`);
 });
 

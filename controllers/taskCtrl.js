@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import logger from '../helpers/logger';
 
 const Task = mongoose.model('Task');
-const tasks = {
+const taskCtrl = {
 
   // Initial server render
   // Gets all the tasks created by the current user from the DB
@@ -128,4 +128,4 @@ const tasks = {
   }
 };
 
-export default tasks;
+export default taskCtrl;

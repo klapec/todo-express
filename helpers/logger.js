@@ -1,3 +1,9 @@
+// Logging helper
+// Built using winston
+//
+// Logs errors to a file on production and to console on development
+// Logs occasional info events to the console
+
 import path from 'path';
 import winston from 'winston';
 
