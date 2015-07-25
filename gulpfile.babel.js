@@ -19,7 +19,7 @@ const assetsPaths = {
 function errorAlert(err) {
   $.notify.onError({
     title: 'Gulp Error',
-    message: 'Check your terminal',
+    message: 'Check the terminal',
     sound: 'Basso'
   })(err);
   gutil.log(gutil.colors.red(err.toString()));
