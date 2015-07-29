@@ -2,7 +2,8 @@
   "libs": [
     "browser",
     "ecma5",
-    "ecma6"
+    "ecma6",
+    "jquery"
   ],
   "dontLoad": [
     "bower_components",

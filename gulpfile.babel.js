@@ -37,9 +37,10 @@ gulp.task('default', ['nodemon'], () => {
   gulp.watch(assetsPaths.scripts + '*', ['scripts']);
 });
 
-gulp.task('nodemon', (cb) => {
+gulp.task('nodemon', cb => {
   let called = false;
   return $.nodemon({
+    ignore: ['tests/', 'node_modules/', 'bower_components', 'gulpfile.babel.js'],
     script: 'bootstrap.js',
     ext: 'js html hbs',
     env: {'NODE_ENV': 'development'}
@@ -48,14 +49,14 @@ gulp.task('nodemon', (cb) => {
     if (!called) {
       setTimeout(() => {
         cb();
-      }, 2000);
+      }, 4000);
     }
     called = true;
   })
   .on('restart', () => {
     setTimeout(() => {
       bs.reload();
-    }, 2000);
+    }, 4000);
   });
 });
 
