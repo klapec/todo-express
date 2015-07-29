@@ -1,4 +1,4 @@
-/* eslint no-unused-expressions:0 */
+/* eslint no-unused-expressions: 0 */
 
 import mongoose from 'mongoose';
 import request from 'supertest';
