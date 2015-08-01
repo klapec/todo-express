@@ -36,6 +36,10 @@ export default app => {
   }));
   app.set('view engine', 'hbs');
 
+  // Add the test account information to the login page and Google Analytics script
+  // when running as a project example on heroku
+  app.locals.runningAsExample = process.env.HEROKU_EXAMPLE;
+
   // Exposes package.json and env to the views
   app.use((req, res, next) => {
     res.locals.pkg = pkg;
