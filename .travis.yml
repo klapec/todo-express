@@ -3,8 +3,7 @@ node_js:
 - '0.12'
 env:
 - NODE_ENV=test
-sudo: required
-services: mongodb
+sudo: false
 before_script:
 - npm install -g forever
 - NODE_ENV=test forever start bootstrap.js
