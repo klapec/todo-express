@@ -1,35 +1,46 @@
 /* eslint no-unused-expressions: 0 */
 
+import http from 'http';
+import httpProxy from 'http-proxy';
 import mongoose from 'mongoose';
 import request from 'supertest';
 import jsdom from 'jsdom';
 import chai from 'chai';
-import app from '../../app';
+
+const proxy = httpProxy.createProxyServer();
+const server = http.createServer((req, res) => {
+  proxy.web(req, res, { target: 'http://localhost:3000' });
+});
+
+if (!mongoose.connection.name) {
+  const connect = () => {
+    mongoose.connect('mongodb://localhost/todo-app-test');
+  };
+  connect();
+}
 
 import '../../models/task';
-import '../../models/user';
 
 const expect = chai.expect;
-
-const agent = request.agent(app);
-
 const Task = mongoose.model('Task');
-const User = mongoose.model('User');
+const agent = request.agent(server);
 
 let taskCount;
 const testTasks = [];
 
-describe('Backend', () => {
+describe('Backend - Task', () => {
   before(done => {
-    request(app)
+    request(server)
       .get('/signup')
       .end((err, res) => {
-        if (err) return false;
+
+        expect(err).to.not.exist;
 
         jsdom.env(res.text, (errors, window) => {
           const csrf = window.document.querySelector('input[name="_csrf"]').value;
 
-          request(app)
+          // Using agent so that the credentials persist
+          agent
             .post('/signup')
             .set('cookie', res.headers['set-cookie'])
             .send({
@@ -44,131 +55,9 @@ describe('Backend', () => {
       });
   });
 
-  describe('GET /', () => {
-    it('should redirect to /login', done => {
-      request(app)
-        .get('/')
-        .expect('Location', '/login')
-        .expect(302, done);
-    });
-  });
-
-  describe('POST /', () => {
-    it('should return 404', done => {
-      request(app)
-        .post('/')
-        .send({ foo: 'bar' })
-        .expect(404, done);
-    });
-  });
-
-  describe('GET /signup', () => {
-    it('should render the signup page', done => {
-      request(app)
-        .get('/signup')
-        .expect('Content-Type', 'text/html; charset=utf-8')
-        .expect(200, done);
-    });
-  });
-
-  describe('POST /signup', () => {
-    describe('with invalid CSRF', () => {
-      it('should return 403', done => {
-        request(app)
-          .post('/signup')
-          .send({ foo: 'bar' })
-          .expect(403, done);
-      });
-    });
-
-    describe('with valid CSRF', () => {
-      it('should redirect to /tasks', done => {
-        request(app)
-          .get('/signup')
-          .end((err, res) => {
-            if (err) return false;
-
-            jsdom.env(res.text, (errors, window) => {
-              const csrf = window.document.querySelector('input[name="_csrf"]').value;
-
-              request(app)
-                .post('/signup')
-                .set('cookie', res.headers['set-cookie'])
-                .send({
-                  _csrf: csrf,
-                  email: 'test2@gmail.com',
-                  password: 'test2',
-                  passwordConfirmation: 'test2'
-                })
-                .expect('Location', '/tasks')
-                .expect(302, done);
-            });
-          });
-      });
-      it('should\'ve created a new user', done => {
-        User.findOne(
-          { email: 'test2@gmail.com' },
-          (err, user) => {
-            expect(err).to.be.null;
-            expect(user).to.be.an('object');
-            expect(user.email).to.be.eql('test2@gmail.com');
-
-            done();
-          }
-        );
-      });
-    });
-  });
-
-  describe('GET /login', () => {
-    it('should render the login page', done => {
-      request(app)
-        .get('/login')
-        .expect('Content-Type', 'text/html; charset=utf-8')
-        .expect(200, done);
-    });
-  });
-
-  describe('POST /login', () => {
-    describe('with invalid CSRF', () => {
-      it('should return 403', done => {
-        request(app)
-          .post('/login')
-          .send({ foo: 'bar' })
-          .expect(403, done);
-      });
-    });
-
-    describe('with valid CSRF', () => {
-      it('should redirect to /tasks', done => {
-        request(app)
-          .get('/login')
-          .end((err, res) => {
-
-            expect(err).to.not.exist;
-
-            jsdom.env(res.text, (errors, window) => {
-              const csrf = window.document.querySelector('input[name="_csrf"]').value;
-
-              // Using agent so that the credentials persist
-              agent.post('/login')
-                .set('cookie', res.headers['set-cookie'])
-                .send({
-                  _csrf: csrf,
-                  email: 'test@gmail.com',
-                  password: 'test'
-                })
-                .expect('Location', '/tasks')
-                .expect(302, done);
-            });
-          });
-      });
-    });
-  });
-
   describe('GET /tasks', () => {
     it('should redirect to /login when not logged in', done => {
-      request(app)
+      request(server)
         .get('/tasks')
         .expect('Location', '/login')
         .expect(302, done);
@@ -185,7 +74,7 @@ describe('Backend', () => {
 
   describe('POST /tasks', () => {
     it('should redirect to /login when not logged in', done => {
-      request(app)
+      request(server)
         .post('/tasks')
         .expect('Location', '/login')
         .expect(302, done);
@@ -225,7 +114,7 @@ describe('Backend', () => {
 
   describe('PUT /tasks/:id', () => {
     it('should redirect to /login when not logged in', done => {
-      request(app)
+      request(server)
         .put('/tasks/123456')
         .expect('Location', '/login')
         .expect(302, done);
@@ -268,7 +157,7 @@ describe('Backend', () => {
 
   describe('DELETE /tasks/:id', () => {
     it('should redirect to /login when not logged in', done => {
-      request(app)
+      request(server)
         .del('/tasks/123456')
         .expect('Location', '/login')
         .expect(302, done);
@@ -285,22 +174,6 @@ describe('Backend', () => {
             done();
           });
       });
-    });
-  });
-
-  describe('GET /logout', () => {
-    it('should redirect to /', done => {
-      request(app)
-        .get('/logout')
-        .expect('Location', '/')
-        .expect(302, done);
-    });
-  });
-
-  describe('404', () => {
-    it('should return 404', done => {
-      agent.get('/foobar')
-        .expect(404, done);
     });
   });
 

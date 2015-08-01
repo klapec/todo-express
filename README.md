@@ -1,5 +1,7 @@
 # Todo-express.
 
+![Travis](https://travis-ci.org/klapec/todo-express.svg)
+
 Node.js app based on Express, MongoDB, Mongoose, Passport.
 
 ## Usage
@@ -12,6 +14,4 @@ Requires MongoDB. If it's not running locally (on `localhost:27017`) then the mo
 
 ## Testing
 
-Server-side code tests can be run with `npm test`.
-
-Client-side code tests can be run with `npm run-script test-front`.
+Both client and server side tests can be run with `gulp test`.
