@@ -7,9 +7,12 @@ import browserSync from 'browser-sync';
 import mainBowerFiles from 'main-bower-files';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
+import cp from 'child_process';
 
 const $ = gulpLoadPlugins();
 const bs = browserSync.create();
+const exec = cp.exec;
+let testServer;
 
 const assetsPaths = {
   sass: 'assets/sass/',
@@ -62,7 +65,7 @@ gulp.task('nodemon', cb => {
 
 gulp.task('styles', () => {
   return gulp.src(assetsPaths.sass + 'app.scss')
-    .pipe($.plumber({errorHandler: errorAlert}))
+    .pipe($.plumber({ errorHandler: errorAlert }))
     .pipe($.sass({
       precision: 4
     }))
@@ -74,7 +77,7 @@ gulp.task('styles', () => {
       suffix: '.min'
     }))
     .pipe(gulp.dest('public/'))
-    .pipe(bs.reload({stream: true}))
+    .pipe(bs.reload({ stream: true }))
     .pipe($.notify({
       title: 'Stylesheets recompiled',
       message: '<%= file.relative %>',
@@ -90,7 +93,7 @@ gulp.task('scripts', () => {
     .pipe(buffer())
     .pipe($.uglify())
     .pipe(gulp.dest('public/'))
-    .pipe(bs.reload({stream: true}))
+    .pipe(bs.reload({ stream: true }))
     .pipe($.notify({
       title: 'Scripts recompiled',
       message: '<%= file.relative %>',
@@ -104,4 +107,33 @@ gulp.task('bower', () => {
       extname: '.scss'
     }))
     .pipe(gulp.dest(assetsPaths.sass + 'vendors/'));
+});
+
+gulp.task('test', ['test-server', 'test-frontend', 'test-backend'], () => {
+  testServer.kill();
+  return process.exit();
+});
+
+gulp.task('test-server', cb => {
+  testServer = exec('NODE_ENV=test node bootstrap.js');
+
+  setTimeout(() => {
+    cb();
+  }, 3000);
+});
+
+gulp.task('test-backend', ['test-frontend'], () => {
+  return gulp.src('./tests/backend/*.js', { read: false })
+    .pipe($.mocha());
+});
+
+gulp.task('test-frontend', ['test-server'], cb => {
+  exec('PHANTOMJS_EXECUTABLE=./node_modules/phantomjs/bin/phantomjs ./node_modules/.bin/mocha-casperjs tests/frontend/*.js; exit 0', (err, stdout, stderr) => {
+    if (err) {
+      return err;
+    }
+    gutil.log(stdout);
+    gutil.log(stderr);
+    cb();
+  });
 });

@@ -8,12 +8,12 @@ function generateEmail() {
   return (Math.random() * 30).toString().slice(3, 9) + '@gmail.com';
 }
 
-describe('Frontend - User', function() {
+describe('Frontend: ', function() {
   before(function() {
     casper.start('http://localhost:3000/');
   });
 
-  describe('initial load', function() {
+  describe('Initial load', function() {
     it('should redirect to /login', function() {
       casper.then(function() {
         expect(this.getCurrentUrl()).to.be.equal('http://localhost:3000/login');
@@ -21,7 +21,7 @@ describe('Frontend - User', function() {
     });
   });
 
-  describe('login page', function() {
+  describe('Login page', function() {
     before(function() {
       newUser = generateEmail();
       expect('.auth-alt-link').to.be.inDOM.and.be.visible;
@@ -108,7 +108,7 @@ describe('Frontend - User', function() {
     });
   });
 
-  describe('signup page', function() {
+  describe('Signup page', function() {
     it('should have a signup form', function() {
       casper.then(function() {
         expect(this.getCurrentUrl()).to.be.equal('http://localhost:3000/signup');
@@ -187,7 +187,7 @@ describe('Frontend - User', function() {
     });
   });
 
-  describe('new account', function() {
+  describe('New account', function() {
     it('should be able to log off', function() {
       expect('a[href="/logout"]').to.be.inDOM.and.be.visible;
 

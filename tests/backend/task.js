@@ -28,7 +28,7 @@ const agent = request.agent(server);
 let taskCount;
 const testTasks = [];
 
-describe('Backend - Task', () => {
+describe('Backend: ', () => {
   before(done => {
     request(server)
       .get('/signup')

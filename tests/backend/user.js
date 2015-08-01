@@ -24,7 +24,7 @@ import '../../models/user';
 const expect = chai.expect;
 const User = mongoose.model('User');
 
-describe('Backend - User', () => {
+describe('Backend: ', () => {
   before(done => {
     request(server)
       .get('/signup')

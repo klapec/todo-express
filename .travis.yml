@@ -3,16 +3,19 @@ node_js:
 - '0.12'
 env:
 - NODE_ENV=test
+sudo: required
 services: mongodb
 before_script:
-- NODE_ENV=test node bootstrap.js
-- sleep 3
+- npm install -g forever
+- NODE_ENV=test forever start bootstrap.js
 script:
+- sleep 3
 - ./node_modules/.bin/mocha --compilers js:babel/register --timeout 10000 tests/backend/*.js
 - ./node_modules/.bin/mocha-casperjs tests/frontend/*.js; exit 0
+after_script:
+- forever stop bootstrap.js
 deploy:
   provider: heroku
-  api_key:
-    secure: EAuUrAUTb8b6WvLWk7d5WMNekzZNsUK8jl6vWiS+D2zNMGCWGCxHG5GpPAIe+IwYW0PRTI5s5L1OjdhZXRlbzrFOwg3NKzwM/Z5jzVSL4oG8QZmf9GYiulyrq574jRoxw2vynX4SxXGhDnNyQtrL3Yt3HubJTfD/32Rv5p61/KkaEJgn5nlW1RwjC3qvBr7WpjhibRgybGVBGEWcYe61jpqRqGlQeoQMMmZtlzBE19ET8Avglugo/90Htl7nDGGhcYB2Qmz9IFwyfi4OcfHkpJWtJkE6gsfvsuw/mo+t2SfB2R8qUZ/F29ADj99V2BbY0MU3wTUUF8VV1XsHN+opnEsmoXw1TOv02xriMIkuxPD+Kvbz2ZHvdgQu9eUn6Xtb7DLvjPA0MnJonebct+kOdCJk0Pd68Bni1eKFnEkORIrEBmm4fnsTe0W4XUekubiza14AEakcpSW3Oh2kU/3mzzmAtAaiMjDNxx7amMUAQ/AQimoCtNGIG5Jw1nle8lGzHmrOSjCW4NpYAKMXD4QnbSZyLIuGIPFbHb15UTTc4hoIR0anJb//rmDM2iXoBVAndeXnBAFVg7iFJo6tD8B1GB1ruPoiTi1tu8gqgnw58UNNOpCNOliZQYbnJosGnQ139o4IZAiG/XQcJhFke/UQ3HrsIB/6g4RG9WppkHWmB2k=
   app: klapec-todo-express
-  on: production
+  api_key:
+    secure: PYEohkNpEGSRVgfQDQU1z6BXDK6WNikvsC2Hxl/nfrMwXXsHnVpjJEZPLU+f0qhmZ//8SH2FLYCPZJzvE929cDfKTboXQzZRuBGBo1izZMel/t+TIchwVBk5PNtBMvIGNjy0UTVYgdtGPrIh91If4kRGnRzxTrtg36mpiMlmQEhvbss6HKhhSi/uVNswfTTUEndoRuzoz0Hp2ve0I0BvJi/HabkphKmo7dwiVi0nRlOQcdmwMD+v8XWFPCwz1m+rVNs7Un2W6F5SQCdSQ7/qIsmrErkur0lW0T+7/61ipH42AkOe1VvnJpHb3efRCiFomJJjCGaJeO+Tkzclho4S2xAdQ7/oYF3/EqV8vLTep1ubA3MQUIcyCQfQFmcaNJtOOm1U0i0KTTAFYnx4tcvEg3exuXHGYeWhXqQPHCyI1aAzn9u8kkaZ2iQBxD5KA1DFJIrAMGlbaYFk/KjzTXmNUAkqjAXzu64QEt7zz94XB5aFhHloOFd+aBGYK+5Ysgy2jscOmgdKcUut80q/+qGCh3nZH1T6qMHAZcCqOEbHgY2RiV4GnqtlQFOYjbIcenVI7D/7u3o8qBsfvpG8/naQ2/HIX/zsnxreLBuQPy0N+Zn4hvyjtI4yGc/nR4/y6vshp7TmR0mkbBr9z9/Og9U4+Ij9R+HbuKzZKihOOnk8ePQ=
