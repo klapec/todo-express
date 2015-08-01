@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+- '0.12'
+env:
+- NODE_ENV=test
+sudo: required
+services: mongodb
+before_script:
+- npm install -g forever
+- NODE_ENV=test forever start bootstrap.js
+script:
+- sleep 3
+- ./node_modules/.bin/mocha --compilers js:babel/register --timeout 10000 tests/backend/*.js
+- ./node_modules/.bin/mocha-casperjs tests/frontend/*.js; exit 0
