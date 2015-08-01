@@ -147,11 +147,17 @@ describe('Frontend: ', function() {
           casper.sendKeys('.add-task__name', 'test task 3');
           casper.click('.add-task__button');
           casper.waitForSelector('.task-list__item', function() {
+            expect('.task-list__item').to.be.inDOM.and.be.visible;
+            expect(this.getElementsInfo('.task-list__item')[0].text).to.be.equal('test task 3');
             this.click('.task-list__item__toggle');
-            this.sendKeys('.add-task__name', 'test task 4');
-            this.click('.add-task__button');
-            this.waitForSelector('.task-list__item:not(.completed)', function() {
-              this.click('.task-list__item:last-of-type .task-list__item__toggle');
+            this.waitForSelector('.task-list__item__toggle.checked', function() {
+              expect('.task-list__item__toggle.checked').to.be.inDOM.and.be.visible;
+              this.sendKeys('.add-task__name', 'test task 4');
+              this.click('.add-task__button');
+              this.waitForSelector('.task-list__item:nth-of-type(2)', function() {
+                expect(this.getElementsInfo('.task-list__item')[1].text).to.be.equal('test task 4');
+                this.click('.task-list__item:last-of-type .task-list__item__toggle');
+              });
             });
           });
         });
