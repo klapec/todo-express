@@ -11,7 +11,7 @@ export default new LocalStrategy({
   },
   (req, email, password, done) => {
     User.findOne(
-      {email: email},
+      { email },
       'email hashedPassword salt',
       (err, user) => {
         req.login.email = email;

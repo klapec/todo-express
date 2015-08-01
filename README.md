@@ -1,4 +1,4 @@
-# Todo-express.
+# Todo-express
 
 ![Travis](https://travis-ci.org/klapec/todo-express.svg)
 
@@ -15,3 +15,11 @@ Requires MongoDB. If it's not running locally (on `localhost:27017`) then the mo
 ## Testing
 
 Both client and server side tests can be run with `gulp test`.
+
+## Example
+
+[klapec-todo-express.heroku.com](https://klapec-todo-express.herokuapp.com/).
+
+Since this is running on a free heroku dyno, it sleeps after 30 minutes of inactivity and it has to sleep for 6 hours in a 24 hour period.
+
+If the page is loading slowly, give it a few seconds for it to wake up.

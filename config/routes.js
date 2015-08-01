@@ -20,7 +20,6 @@ export default app => {
 
   app.get('/login', csrfProtection, userCtrl.login.get);
   app.post('/login', csrfProtection, passport.authenticate('local', {
-    successRedirect: '/tasks',
     failureRedirect: '/login',
     failureFlash: true
   }), userCtrl.login.post);

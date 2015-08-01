@@ -43,7 +43,6 @@ const userCtrl = {
 
       newUser.save((err, user) => {
         if (err) {
-          logger.error(err); // do we really want to log every validation error?
           // Renders back the signup page on error (including validation error)
           return res.render('users/signup', {
             error: err,

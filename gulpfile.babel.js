@@ -43,7 +43,7 @@ gulp.task('nodemon', cb => {
     ignore: ['tests/', 'node_modules/', 'bower_components', 'gulpfile.babel.js'],
     script: 'bootstrap.js',
     ext: 'js html hbs',
-    env: {'NODE_ENV': 'development'}
+    env: { 'NODE_ENV': 'development' }
   })
   .on('start', () => {
     if (!called) {

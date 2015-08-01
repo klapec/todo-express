@@ -39,4 +39,33 @@ app.listen(port, () => {
   logger.info(`Environment: ${process.env.NODE_ENV}`);
 });
 
+// Create a test account if running as an example on heroku
+if (process.env.HEROKU_EXAMPLE) {
+  const User = mongoose.model('User');
+  User.findOne(
+    { email: 'test@gmail.com' },
+    (err, user) => {
+      if (err) {
+        logger.error('Error looking up for a test user account: ', err);
+      } else if (!user) {
+        const newUser = new User({
+          email: 'test@gmail.com',
+          password: 'test',
+          passwordConfirmation: 'test',
+          createdAt: new Date()
+        });
+
+        newUser.save(err => {
+          if (err) {
+            return logger.error('Error creating a test user account', err);
+          }
+          logger.info('Successfully created a test user account');
+        });
+      } else {
+        logger.info('Test user account already created');
+      }
+    }
+  );
+}
+
 export default app;
