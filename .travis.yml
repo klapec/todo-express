@@ -6,7 +6,7 @@ env:
 sudo: false
 before_script:
 - npm install -g forever
-- NODE_ENV=test forever start bootstrap.js
+- forever start bootstrap.js
 script:
 - sleep 3
 - ./node_modules/.bin/mocha --compilers js:babel/register --timeout 10000 tests/backend/*.js

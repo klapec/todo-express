@@ -11,10 +11,11 @@ const proxy = httpProxy.createProxyServer();
 const server = http.createServer((req, res) => {
   proxy.web(req, res, { target: 'http://localhost:3000' });
 });
+const mongoUri = process.env.MONGOURI || mongoConfig.uri;
 
 if (!mongoose.connection.name) {
   const connect = () => {
-    mongoose.connect('mongodb://localhost/todo-app-test');
+    mongoose.connect(mongoUri);
   };
   connect();
 }
