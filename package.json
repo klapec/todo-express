@@ -63,7 +63,6 @@
     "gulp-util": "^3.0.4",
     "http-proxy": "^1.11.1",
     "jsdom": "^3.1.2",
-    "main-bower-files": "^2.7.0",
     "mocha": "^2.2.4",
     "mocha-casperjs": "^0.5.4",
     "mocha-mongoose": "^1.0.4",

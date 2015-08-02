@@ -1,5 +1,4 @@
 // User mongoose model
-//
 // Does the login/signup input validation
 
 import mongoose from 'mongoose';
