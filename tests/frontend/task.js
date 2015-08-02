@@ -149,21 +149,20 @@ describe('Frontend: ', function() {
           casper.waitForSelector('.task-list__item', function() {
             expect('.task-list__item').to.be.inDOM.and.be.visible;
             expect(this.getElementsInfo('.task-list__item')[0].text).to.be.equal('test task 3');
-            this.click('.task-list__item__toggle');
-            this.waitForSelector('.task-list__item__toggle.checked', function() {
-              expect('.task-list__item__toggle.checked').to.be.inDOM.and.be.visible;
-              this.sendKeys('.add-task__name', 'test task 4');
-              this.click('.add-task__button');
-              this.waitForSelector('.task-list__item:nth-of-type(2)', function() {
-                expect(this.getElementsInfo('.task-list__item')[1].text).to.be.equal('test task 4');
-                this.click('.task-list__item:last-of-type .task-list__item__toggle');
-              });
+            this.sendKeys('.add-task__name', 'test task 4');
+            this.click('.add-task__button');
+            this.waitForSelector('.task-list__item:nth-of-type(2)', function() {
+              expect(this.getElementsInfo('.task-list__item')[1].text).to.be.equal('test task 4');
+              this.click('.task-list__item__toggle:first-of-type');
+              expect('.task-list__item__toggle.checked').to.be.inDOM;
+              this.click('.task-list__item__toggle:not(.checked)');
+              expect(this.getElementsInfo('.task-list__item__toggle.checked').length).to.be.equal(2);
             });
           });
         });
 
         it('should actually remove those tasks', function() {
-          casper.then(function() {
+          casper.waitForSelector('.task-list__item.completed', function() {
             this.click('.clear-completed');
             this.waitWhileVisible('.task-list__item', function() {
               expect('.task-list__item').to.not.be.inDOM;

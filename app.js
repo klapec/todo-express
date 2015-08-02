@@ -5,7 +5,7 @@ import mongoConfig from './config/mongo';
 
 const app = express();
 const port = process.env.PORT || 3000;
-const mongoUri = process.env.MONGOURI || mongoConfig.uri;
+const mongoUri = process.env.MONGO_URI || mongoConfig.uri;
 
 const connect = () => {
   mongoose.connect(mongoUri, {server: {socketOptions: {keepAlive: 1}}});

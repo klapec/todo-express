@@ -6,12 +6,13 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 import jsdom from 'jsdom';
 import chai from 'chai';
+import mongoConfig from '../../config/mongo';
 
 const proxy = httpProxy.createProxyServer();
 const server = http.createServer((req, res) => {
   proxy.web(req, res, { target: 'http://localhost:3000' });
 });
-const mongoUri = process.env.MONGOURI || mongoConfig.uri;
+const mongoUri = process.env.MONGO_URI || mongoConfig.uri;
 
 if (!mongoose.connection.name) {
   const connect = () => {

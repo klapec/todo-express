@@ -60,7 +60,7 @@ export default app => {
       maxAge: 86400000 // 24 hours
     },
     store: new MongoStore({
-      url: process.env.MONGOURI || mongoConfig.uri,
+      url: process.env.MONGO_URI || mongoConfig.uri,
       collection: 'sessions'
     })
   }));
