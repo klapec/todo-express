@@ -4,7 +4,6 @@ import gutil from 'gulp-util';
 import babelify from 'babelify';
 import browserify from 'browserify';
 import browserSync from 'browser-sync';
-import mainBowerFiles from 'main-bower-files';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
 import cp from 'child_process';
@@ -99,14 +98,6 @@ gulp.task('scripts', () => {
       message: '<%= file.relative %>',
       sound: 'Glass'
     }));
-});
-
-gulp.task('bower', () => {
-  return gulp.src(mainBowerFiles())
-    .pipe($.rename({
-      extname: '.scss'
-    }))
-    .pipe(gulp.dest(assetsPaths.sass + 'vendors/'));
 });
 
 gulp.task('test', ['test-server', 'test-frontend', 'test-backend'], () => {
