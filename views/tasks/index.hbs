@@ -12,17 +12,11 @@
       <span class="clear-completed">Clear completed</span>
     </div>
   </div>
-  {{#if err}}
-  <div class="task-list__error">
-    <h3>Error</h3>
-    <p>Something wrong happened. It has been recorded in the server log and I'm working on it.</p>
-    <p>For now, try refreshing the page.</p>
-  </div>
-  {{/if}}
+  <div class="task-list__error" style="display: {{#if err}}block{{else}}none{{/if}}"></div>
   <ul class="task-list">
     {{#if tasks}}
       {{#each tasks}}
-        <li class="task-list__item {{#if completed}}completed{{/if}}" data-id="{{_id}}">
+      <li class="task-list__item {{#if completed}}completed{{/if}}" data-id="{{_id}}">
           <div class="task-list__item--view">
             <!-- The reason this is a span and not a checkbox input
             is that styling input elements is rather quirky

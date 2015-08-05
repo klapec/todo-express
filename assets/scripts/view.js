@@ -79,8 +79,18 @@ export default class View {
     this.taskListCounter.textContent = `${number} task${plural} left`;
   }
 
-  displayError() {
+  displayError(err) {
     this.taskListError.style.display = 'block';
+    const errorName = document.createElement('h3');
+    errorName.textContent = err;
+    this.taskListError.appendChild(errorName);
+    const errorDesc = document.createElement('span');
+    errorDesc.textContent = `Something wrong happened. I'm working on it.`;
+    this.taskListError.appendChild(errorDesc);
+  }
+
+  hideError() {
+    this.taskListError.style.display = 'none';
   }
 
   bind(event, handler) {
@@ -183,8 +193,11 @@ export default class View {
 
     // Display error when receiving an error, do nothing else
     if (opts.err) {
-      return self.displayError();
+      return self.displayError(opts.err);
     }
+
+    // Hide the error message in case some previous action made it visible
+    self.hideError();
 
     const commands = {
       init() {

@@ -21,7 +21,7 @@ describe('Frontend: ', function() {
   });
 
   beforeEach(function() {
-    expect('.task-list__error').to.not.be.inDOM;
+    expect('.task-list__error').to.not.be.visible;
   });
 
   describe('Adding a task', function() {

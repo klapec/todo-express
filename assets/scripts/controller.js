@@ -36,28 +36,36 @@ export default class Controller {
 
     // Sends the task title to the model
     // receives task id and title from the DB if the request was successful
-    this.model.create(title, res => {
-      const response = JSON.parse(res);
-      this.view.render('addTask', {
-        err: response.err,
-        id: response.id,
-        title
+    this.model.create(title)
+      .then(response => {
+        const res = JSON.parse(response);
+        this.view.render('addTask', {
+          id: res.id,
+          title
+        });
+      }, error => {
+        this.view.render('addTask', {
+          err: error
+        });
       });
-    });
   }
 
   // Invoked when the editing has finished
   editTaskDone(id, title, oldVal) {
     // Checks if the input isn't empty and if it actually changed
     if (title.trim() && title !== oldVal) {
-      this.model.update(id, { title }, res => {
-        const response = JSON.parse(res);
-        this.view.render('editTaskDone', {
-          err: response.err,
-          id: response.id,
-          title: response.title
+      this.model.update(id, { title })
+        .then(response => {
+          const res = JSON.parse(response);
+          this.view.render('editTaskDone', {
+            id: res.id,
+            title: res.title
+          });
+        }, error => {
+          this.view.render('editTaskDone', {
+            err: error
+          });
         });
-      });
     // Otherwise returns the old value to the View
     } else {
       this.view.render('editTaskDone', { id, title: oldVal });
@@ -70,7 +78,7 @@ export default class Controller {
     let query = '';
 
     // Checks whether the args object has a completed property
-    // which would indicate that we wan't to remove multiple
+    // which would indicate that we want to remove multiple
     // completed tasks
     if (args.completed) {
       const arr = [];
@@ -86,25 +94,33 @@ export default class Controller {
       query = args.id;
     }
 
-    this.model.remove(query, res => {
-      const response = JSON.parse(res);
-      this.view.render('removeTask', {
-        err: response.err,
-        query: response.query
+    this.model.remove(query)
+      .then(response => {
+        const res = JSON.parse(response);
+        this.view.render('removeTask', {
+          query: res.query
+        });
+      }, error => {
+        this.view.render('removeTask', {
+          err: error
+        });
       });
-    });
   }
 
   // Toggles the completed parameter of a task
   // which can be either true or false
   toggleTask(id, completed) {
-    this.model.update(id, { completed }, res => {
-      const response = JSON.parse(res);
-      this.view.render('toggleTask', {
-        err: response.err,
-        id: response.id,
-        completed: response.completed
+    this.model.update(id, { completed })
+      .then(response => {
+        const res = JSON.parse(response);
+        this.view.render('toggleTask', {
+          id: res.id,
+          completed: res.completed
+        });
+      }, error => {
+        this.view.render('toggleTask', {
+          err: error
+        });
       });
-    });
   }
 }
