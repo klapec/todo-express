@@ -34,7 +34,7 @@ const taskCtrl = {
     newTask.save(err => {
       if (err) {
         logger.error(err);
-        return res.send({ err });
+        return res.status(500);
       }
       // Sends back ID of the new task
       return res.send({
@@ -56,7 +56,7 @@ const taskCtrl = {
         (err, task) => {
           if (err) {
             logger.error(err);
-            return res.send({ err });
+            return res.status(500);
           }
           res.send({
             id: task._id,
@@ -74,7 +74,7 @@ const taskCtrl = {
         (err, task) => {
           if (err) {
             logger.error(err);
-            return res.send({ err });
+            return res.status(500);
           }
           res.send({
             id: task._id,
@@ -103,27 +103,12 @@ const taskCtrl = {
       query.push(params);
     }
 
-    function removeAll(cb) {
-      // Remove every single ID from the query array
-      query.forEach(v => {
-        Task.findByIdAndRemove(
-          v,
-          err => {
-            if (err) {
-              logger.error(err);
-              return cb({ err });
-            }
-          }
-        );
-      });
-      cb({ query });
-    }
-
-    removeAll(arg => {
-      return res.send({
-        err: arg.err,
-        query: arg.query
-      });
+    Task.remove({ '_id': { '$in': query }}, err => {
+      if (err) {
+        logger.error(err);
+        return res.send(500);
+      }
+      res.send({ query });
     });
   }
 };
