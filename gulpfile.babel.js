@@ -11,6 +11,8 @@ import cp from 'child_process';
 const $ = gulpLoadPlugins();
 const bs = browserSync.create();
 const exec = cp.exec;
+const production = process.env.NODE_ENV === 'production';
+
 let testServer;
 
 const assetsPaths = {
@@ -89,8 +91,8 @@ gulp.task('scripts', () => {
     .transform(babelify)
     .bundle()
     .pipe(source('bundle.min.js'))
-    .pipe(buffer())
-    .pipe($.uglify())
+    .pipe($.if(production, buffer()))
+    .pipe($.if(production, $.uglify()))
     .pipe(gulp.dest('public/'))
     .pipe(bs.reload({ stream: true }))
     .pipe($.notify({
