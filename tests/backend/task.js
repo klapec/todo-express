@@ -161,7 +161,7 @@ describe('Backend: ', () => {
       request(server)
         .del('/tasks/123456')
         .expect('Location', '/login')
-        .expect(302, done);
+        .expect(500, done);
     });
 
     describe('when logged in', () => {
