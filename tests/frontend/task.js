@@ -204,7 +204,7 @@ describe('Frontend: ', function() {
         this.sendKeys('.task-list__item--edit', casper.page.event.key.Escape);
         this.waitWhileSelector('.task-list__item--edit', function() {
           // Task name shouldn't change
-          expect('.task-list__item__name').to.have.text('test task 5 editedTEST');
+          expect('.task-list__item__name').to.have.text('test task 5 edited');
         });
       });
     });
