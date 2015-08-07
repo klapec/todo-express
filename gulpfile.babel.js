@@ -116,9 +116,12 @@ gulp.task('test-server', cb => {
   }, 3000);
 });
 
-gulp.task('test-backend', ['test-frontend'], () => {
+gulp.task('test-backend', ['test-frontend'], cb => {
   return gulp.src('./tests/backend/*.js', { read: false })
-    .pipe($.mocha());
+    .pipe($.mocha())
+    .once('error', () => {
+      cb();
+    });
 });
 
 gulp.task('test-frontend', ['test-server'], cb => {
