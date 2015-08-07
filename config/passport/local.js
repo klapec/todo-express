@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-import logger from '../../helpers/logger';
+// Local passport strategy
 
-const User = mongoose.model('User');
-const LocalStrategy = require('passport-local').Strategy;
+import User from '../../models/user';
+import logger from '../../helpers/logger';
+import { Strategy as LocalStrategy } from 'passport-local';
 
 export default new LocalStrategy({
     passReqToCallback: true,

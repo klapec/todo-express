@@ -6,11 +6,10 @@ import browserify from 'browserify';
 import browserSync from 'browser-sync';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
-import cp from 'child_process';
+import { exec } from 'child_process';
 
 const $ = gulpLoadPlugins();
 const bs = browserSync.create();
-const exec = cp.exec;
 const production = process.env.NODE_ENV === 'production';
 
 let testServer;
