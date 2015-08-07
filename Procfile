@@ -1,1 +1,1 @@
-web: NODE_ENV="production" node start bootstrap.js
+web: NODE_ENV="production" node bootstrap.js
