@@ -1,6 +1,6 @@
 {
   "name": "todo-express",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Node, Express and MongoDB todo app",
   "main": "bootstrap.js",
   "private": true,
@@ -57,7 +57,7 @@
     "gulp-minify-css": "^1.2.0",
     "gulp-mocha": "^2.1.3",
     "gulp-nodemon": "^2.0.3",
-    "gulp-notify": "git://github.com/klapec/gulp-notify.git",
+    "gulp-notify": "klapec/gulp-notify",
     "gulp-plumber": "^1.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.0.4",

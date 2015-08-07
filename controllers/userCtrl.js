@@ -1,7 +1,6 @@
-import mongoose from 'mongoose';
+import User from '../models/user';
 import logger from '../helpers/logger';
 
-const User = mongoose.model('User');
 const userCtrl = {
   login: {
     // Renders the login page, passing in the csrf token
