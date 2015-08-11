@@ -15,6 +15,12 @@ script:
 - sleep 3
 - ./node_modules/.bin/mocha --compilers js:babel/register --timeout 10000 tests/backend/*.js
 - ./node_modules/.bin/mocha-casperjs tests/frontend/*.js
+before_deploy:
+- git config --global push.default simple
+- git config --global user.email "travis@localhost.localdomain"
+- git config --global user.name "Travis CI"
+- git add --all
+- git commit -am "Travis change"
 deploy:
   provider: openshift
   user: solidslash@gmail.com

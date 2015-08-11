@@ -60,7 +60,7 @@
     "gulp-minify-css": "^1.2.0",
     "gulp-mocha": "^2.1.3",
     "gulp-nodemon": "^2.0.3",
-    "gulp-notify": "klapec/gulp-notify",
+    "gulp-notify": "^2.2.0",
     "gulp-plumber": "^1.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.0.4",
