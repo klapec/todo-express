@@ -40,8 +40,6 @@ describe('Backend: ', () => {
         jsdom.env(res.text, (errors, window) => {
           const csrf = window.document.querySelector('input[name="_csrf"]').value;
 
-          console.log('MONGOOSE CONNECTION: ', mongoose.connection);
-
           // Using agent so that the credentials persist
           agent
             .post('/signup')
@@ -104,12 +102,14 @@ describe('Backend: ', () => {
 
             testTasks.push(res.body);
 
-            Task.count((err, cnt) => {
-              expect(err).to.be.null;
-              expect(cnt).to.be.eql(taskCount + 1);
+            setTimeout(() => {
+              Task.count((err, cnt) => {
+                expect(err).to.be.null;
+                expect(cnt).to.be.eql(taskCount + 1);
 
-              done();
-            });
+                done();
+              });
+            }, 3000);
           });
       });
     });
