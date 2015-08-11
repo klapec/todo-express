@@ -40,6 +40,8 @@ describe('Backend: ', () => {
         jsdom.env(res.text, (errors, window) => {
           const csrf = window.document.querySelector('input[name="_csrf"]').value;
 
+          console.log('MONGOOSE CONNECTION: ', mongoose.connection);
+
           // Using agent so that the credentials persist
           agent
             .post('/signup')
@@ -101,11 +103,9 @@ describe('Backend: ', () => {
             expect(res.body.id).to.not.be.empty;
 
             testTasks.push(res.body);
-            console.log('RES: ', res);
 
             Task.count((err, cnt) => {
               expect(err).to.be.null;
-              console.log('CNT: ', cnt);
               expect(cnt).to.be.eql(taskCount + 1);
 
               done();
