@@ -87,7 +87,6 @@ gulp.task('styles', () => {
 
 gulp.task('scripts', () => {
   browserify(assetsPaths.scripts + 'app.js')
-    .add(require.resolve('babelify/polyfill'))
     .transform(babelify)
     .bundle()
     .pipe(source('bundle.min.js'))
