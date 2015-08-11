@@ -1,7 +1,6 @@
-import mongoose from 'mongoose';
+import Task from '../models/task';
 import logger from '../helpers/logger';
 
-const Task = mongoose.model('Task');
 const taskCtrl = {
 
   // Initial server render

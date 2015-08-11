@@ -6,11 +6,10 @@ import browserify from 'browserify';
 import browserSync from 'browser-sync';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
-import cp from 'child_process';
+import { exec } from 'child_process';
 
 const $ = gulpLoadPlugins();
 const bs = browserSync.create();
-const exec = cp.exec;
 const production = process.env.NODE_ENV === 'production';
 
 let testServer;
@@ -88,7 +87,6 @@ gulp.task('styles', () => {
 
 gulp.task('scripts', () => {
   browserify(assetsPaths.scripts + 'app.js')
-    .add(require.resolve('babelify/polyfill'))
     .transform(babelify)
     .bundle()
     .pipe(source('bundle.min.js'))
@@ -116,9 +114,12 @@ gulp.task('test-server', cb => {
   }, 3000);
 });
 
-gulp.task('test-backend', ['test-frontend'], () => {
+gulp.task('test-backend', ['test-frontend'], cb => {
   return gulp.src('./tests/backend/*.js', { read: false })
-    .pipe($.mocha());
+    .pipe($.mocha())
+    .once('error', () => {
+      cb();
+    });
 });
 
 gulp.task('test-frontend', ['test-server'], cb => {
