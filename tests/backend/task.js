@@ -101,9 +101,11 @@ describe('Backend: ', () => {
             expect(res.body.id).to.not.be.empty;
 
             testTasks.push(res.body);
+            console.log('RES: ', res);
 
             Task.count((err, cnt) => {
               expect(err).to.be.null;
+              console.log('CNT: ', cnt);
               expect(cnt).to.be.eql(taskCount + 1);
 
               done();
