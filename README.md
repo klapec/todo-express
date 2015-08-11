@@ -1,5 +1,6 @@
 # Todo-express
-[![Build Status](https://travis-ci.org/klapec/todo-express.svg?branch=master)](https://travis-ci.org/klapec/todo-express)
+![Build Status](https://codeship.com/projects/22409750-2266-0133-e963-02fe1facef38/status?branch=master)
+
 [![Dependency Status](https://david-dm.org/klapec/todo-express.svg)](https://david-dm.org/klapec/todo-express)
 
 Node.js app based on Express, MongoDB, Mongoose and Passport.
