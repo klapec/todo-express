@@ -18,10 +18,11 @@ import pkg from './package.json';
 
 const app = express();
 const MongoStore = connectMongo(session);
-const port = process.env.PORT || 3000;
+const ipAddress = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+const port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000;
 const mongoUri = process.env.MONGO_URI || defaultUri;
 const env = process.env.NODE_ENV || 'development';
-const runningOnHeroku = process.env.HEROKU_EXAMPLE || false;
+const runningOnOpenshift = process.env.OPENSHIFT_EXAMPLE || false;
 
 const connect = () => {
   mongoose.connect(mongoUri, { server: { socketOptions: { keepAlive: 1 }}});
@@ -57,8 +58,8 @@ app.engine('hbs', exphbs({
 app.set('view engine', 'hbs');
 
 // Add the test account information to the login page and Google Analytics script
-// when running as a project example on heroku
-app.locals.runningAsExample = runningOnHeroku;
+// when running as a project example on Openshift
+app.locals.runningAsExample = runningOnOpenshift;
 
 // Exposes package.json and env to the views
 app.use((req, res, next) => {
@@ -105,13 +106,13 @@ app.use(flash());
 app.use('/', routes);
 
 // Start the server
-app.listen(port, () => {
+app.listen(port, ipAddress, () => {
   logger.info(`Server listening on port: ${port}`);
   logger.info(`Environment: ${env}`);
 });
 
-// Create a test account if running as an example on heroku
-if (runningOnHeroku) {
+// Create a test account if running as an example on Openshift
+if (runningOnOpenshift) {
   User.findOne(
     { email: 'test@gmail.com' },
     (err, user) => {
