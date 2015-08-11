@@ -8,10 +8,19 @@ env:
 sudo: false
 cache:
   directories:
-    - node_modules
+  - node_modules
 before_script:
 - ./node_modules/.bin/forever start bootstrap.js
 script:
 - sleep 3
 - ./node_modules/.bin/mocha --compilers js:babel/register --timeout 10000 tests/backend/*.js
 - ./node_modules/.bin/mocha-casperjs tests/frontend/*.js
+deploy:
+  provider: openshift
+  user: solidslash@gmail.com
+  password:
+    secure: JD3PhU9iHzBYeB9fbl+y4WlZP/Aonc9jSxn8nyWUs9VZZnyxUxtMatcgttb9U49X9OF8dZ9fSqIevbTQeqKUlimTNo4wzBUEXLYwwj/aF90h+y3GizYcOaLpHpSnrcUMNAjGQXTqj1z4X18xJYpGdrttb9nfW4jOcEG05iyKF9xkydKtpaMluhXdxrUb+B43ofRwZ4pB9wJnfooAYuvF32JTUGlv2wYsE1y4L+3NmqZZg2tw2nk9CvZlH2taiCvnLX/8o1vScyH6Rc/x1K26ptfyrPzf2xpaa1Zo/Cs6Vl2kthm3VcUZnjQ8qGaT6bj9bere4HXXYcnh6bw6zFFn6JAjmqFDgr1zip0n91CWeS7CqrWAm8co4ea4h4iDDPzVVPx6udnvqS1A/ZADaDxN4YEQZ6n/JRVYm2HwljgOm8RNZEnXOyQZLqinRJanx08Ry+E+o+nSNyyXF7f8etxP50F2akvS7S3PkYTLz5zO7+15/lZRuiRzT3OR3z/Q5n9vSKvsPe5padBM+egwKqjkNwg/ZspBc1Uoo0iLjCtbT0DZWJ5Qr1l96cnZWwk5sV+YlgQ4dLbj2ecm3upR6gQeONeDNNtnEEoe6lCrLbC+mQuuIUMaplyWzhsjSq8S0ZeuIvT1dsoGAWVdMX9D9PX9BWkKLc+p9FwgAfGmbOmo3BE=
+  app: todoexpress
+  domain: klapec
+  on:
+    repo: klapec/todo-express
