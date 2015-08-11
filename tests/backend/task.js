@@ -102,14 +102,12 @@ describe('Backend: ', () => {
 
             testTasks.push(res.body);
 
-            setTimeout(() => {
-              Task.count((err, cnt) => {
-                expect(err).to.be.null;
-                expect(cnt).to.be.eql(taskCount + 1);
+            Task.count((err, cnt) => {
+              expect(err).to.be.null;
+              expect(cnt).to.be.eql(taskCount + 1);
 
-                done();
-              });
-            }, 3000);
+              done();
+            });
           });
       });
     });
