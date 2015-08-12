@@ -28,8 +28,7 @@ const env = process.env.NODE_ENV || 'development';
 const runningOnOpenshift = process.env.OPENSHIFT_EXAMPLE || false;
 
 morgan.token('timestamp', () => {
-  const now = new Date().toLocaleString();
-  return now.slice(4, 15) + ' ' + now.slice(16, -16);
+  return new Date().toISOString().slice(0, -5).split('T').join(' ');
 });
 
 morgan.token('remoteIp', req => {
