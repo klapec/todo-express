@@ -1,2 +1,6 @@
 require('babel-core/register');
-require('./app');
+
+var Server = require('./app');
+var server = new Server();
+
+server.connect();

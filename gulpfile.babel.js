@@ -7,12 +7,13 @@ import browserSync from 'browser-sync';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
 import { exec } from 'child_process';
+import Server from './app';
 
 const $ = gulpLoadPlugins();
 const bs = browserSync.create();
 const production = process.env.NODE_ENV === 'production';
+const server = new Server();
 
-let testServer;
 let backTestsResultCode;
 let frontTestsResultCode;
 
@@ -31,38 +32,23 @@ function errorAlert(err) {
   this.emit('end');
 }
 
-gulp.task('default', ['nodemon'], () => {
-
-  bs.init({
-    proxy: 'http://localhost:3000',
-    port: 4000
+gulp.task('default', () => {
+  server.connect();
+  server.once('connected', () => {
+    bs.init({
+      proxy: 'http://localhost:3000',
+      port: 4000
+    });
   });
 
+  gulp.watch(['./*.js', './!(node_modules|public|tests|assets)/**/*.{js,html,hbs}', '!./gulpfile.babel.js'], () => {
+    server.reconnect();
+    server.once('connected', () => {
+      bs.reload();
+    });
+  });
   gulp.watch(assetsPaths.sass + '**/*', ['styles']);
   gulp.watch(assetsPaths.scripts + '*', ['scripts']);
-});
-
-gulp.task('nodemon', cb => {
-  let called = false;
-  return $.nodemon({
-    ignore: ['tests/', 'node_modules/', 'bower_components', 'gulpfile.babel.js'],
-    script: 'bootstrap.js',
-    ext: 'js html hbs',
-    env: { 'NODE_ENV': 'development' }
-  })
-  .on('start', () => {
-    if (!called) {
-      setTimeout(() => {
-        cb();
-      }, 4000);
-    }
-    called = true;
-  })
-  .on('restart', () => {
-    setTimeout(() => {
-      bs.reload();
-    }, 4000);
-  });
 });
 
 gulp.task('styles', () => {
@@ -79,41 +65,29 @@ gulp.task('styles', () => {
       suffix: '.min'
     }))
     .pipe(gulp.dest('public/'))
-    .pipe(bs.reload({ stream: true }))
-    .pipe($.notify({
-      title: 'Stylesheets recompiled',
-      message: '<%= file.relative %>',
-      sound: 'Glass'
-    }));
+    .pipe(bs.stream());
 });
 
 gulp.task('scripts', () => {
-  browserify(assetsPaths.scripts + 'app.js')
+  return browserify(assetsPaths.scripts + 'app.js')
     .transform(babelify)
     .bundle()
     .pipe(source('bundle.min.js'))
     .pipe($.if(production, buffer()))
     .pipe($.if(production, $.uglify()))
     .pipe(gulp.dest('public/'))
-    .pipe(bs.reload({ stream: true }))
-    .pipe($.notify({
-      title: 'Scripts recompiled',
-      message: '<%= file.relative %>',
-      sound: 'Glass'
-    }));
+    .pipe(bs.stream());
 });
 
 gulp.task('test', ['test-server', 'test-backend', 'test-frontend'], () => {
-  testServer.kill();
   return process.exit(frontTestsResultCode === 1 || backTestsResultCode === 1 ? 1 : 0);
 });
 
 gulp.task('test-server', cb => {
-  testServer = exec('NODE_ENV=test node bootstrap.js');
-
-  setTimeout(() => {
+  server.connect();
+  server.on('connected', () => {
     cb();
-  }, 3000);
+  });
 });
 
 gulp.task('test-backend', ['test-server'], cb => {

@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 import express from 'express';
 import mongoose from 'mongoose';
 import connectMongo from 'connect-mongo';
@@ -26,22 +27,9 @@ const mongoUri = process.env.MONGO_URI || defaultUri;
 const env = process.env.NODE_ENV || 'development';
 const runningOnOpenshift = process.env.OPENSHIFT_EXAMPLE || false;
 
-const connect = () => {
-  mongoose.connect(mongoUri, { server: { socketOptions: { keepAlive: 1 }}});
-};
-connect();
-
-const db = mongoose.connection;
-
-db.on('connected', () => {
-  logger.info('Connected to the database');
-});
-db.on('error', err => {
-  logger.error(`Error connecting to database: ${err}`);
-});
-
 morgan.token('timestamp', () => {
-  return new Date().toISOString().slice(0, -5).split('T').join(' ');
+  const now = new Date().toLocaleString();
+  return now.slice(4, 15) + ' ' + now.slice(16, -16);
 });
 
 morgan.token('remoteIp', req => {
@@ -119,12 +107,6 @@ app.use(flash());
 
 app.use('/', routes);
 
-// Start the server
-app.listen(port, ipAddress, () => {
-  logger.info(`Server listening on port: ${port}`);
-  logger.info(`Environment: ${env}`);
-});
-
 // Create a test account if running as an example on Openshift
 if (runningOnOpenshift) {
   User.findOne(
@@ -153,4 +135,45 @@ if (runningOnOpenshift) {
   );
 }
 
-export default app;
+export default class Server extends EventEmitter {
+  constructor() {
+    super();
+
+    this.server;
+    this.mongooseConnection = mongoose.connection;
+  }
+
+  connect() {
+    if (!this.mongooseConnection.name) {
+      mongoose.connect(mongoUri, () => {
+        logger.info('Connected to the database');
+      });
+    }
+
+    this.server = app.listen(port, ipAddress, () => {
+      logger.info(`Server listening on port: ${port}`);
+      logger.info(`Environment: ${env}`);
+      this.emit('connected');
+    });
+  }
+
+  disconnect() {
+    this.server.close(() => {
+      logger.info('Server stopped');
+      this.emit('disconnected');
+    });
+
+    mongoose.disconnect(() => {
+      logger.info('Disconnected from the database');
+    });
+  }
+
+  reconnect() {
+    this.server.close(() => {
+      logger.info('Server stopped');
+      this.emit('disconnected');
+
+      this.connect();
+    });
+  }
+}
