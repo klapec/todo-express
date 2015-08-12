@@ -16,12 +16,12 @@
   ],
   "scripts": {
     "start": "NODE_ENV=production node bootstrap.js",
-    "test": "./node_modules/.bin/mocha --compilers js:babel/register --timeout 10000 tests/backend/*.js",
-    "test-front": "./node_modules/.bin/mocha-casperjs tests/frontend/*.js; exit 0"
+    "test": "NODE_ENV=test ./node_modules/.bin/mocha --compilers js:babel/register --timeout 10000 tests/backend/*.js",
+    "test-front": "NODE_ENV=test ./node_modules/.bin/mocha-casperjs tests/frontend/*.js; exit 0"
   },
   "engines": {
     "node": ">= 0.12.0"
- },
+  },
   "author": "Andrzej Kłapeć",
   "license": "MIT",
   "bugs": {
@@ -39,6 +39,7 @@
     "express": "^4.13.3",
     "express-handlebars": "^2.0.1",
     "express-session": "^1.11.3",
+    "logrotate-stream": "^0.2.5",
     "mongoose": "^4.1.1",
     "morgan": "^1.6.1",
     "passport": "^0.2.2",
@@ -52,6 +53,7 @@
     "casper-chai": "^0.2.1",
     "casperjs": "^1.1.0-beta3",
     "chai": "^3.2.0",
+    "chalk": "^1.1.0",
     "forever": "^0.15.1",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "^2.3.1",

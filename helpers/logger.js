@@ -1,36 +1,40 @@
 // Logging helper
 // Built using winston
-//
-// Logs errors to a file on production and to console on development
-// Logs occasional info events to the console
 
 import path from 'path';
 import winston from 'winston';
 
-const errorPath = path.resolve('logs/errors.log');
+const infoPath = path.resolve('logs/messages.log');
 const env = process.env.NODE_ENV;
 const transports = [];
 
 if (env === 'production') {
   transports.push(
     new winston.transports.Console({
-      name: 'info',
+      timestamp() {
+        return new Date().toGMTString();
+      },
       colorize: true
     }),
     new winston.transports.File({
-      name: 'error',
-      level: 'error',
-      filename: errorPath,
+      filename: infoPath,
       handleExceptions: true,
-      maxsize: 5242880,
+      timestamp() {
+        return new Date().toGMTString();
+      },
+      maxsize: 102400,
       maxFiles: 5,
-      tailable: true
+      tailable: true,
+      prettyPrint: true
     })
   );
 } else if (env === 'development') {
   transports.push(
     new winston.transports.Console({
       level: 'info',
+      timestamp() {
+        return new Date().toGMTString();
+      },
       colorize: true
     })
   );
