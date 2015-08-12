@@ -55,8 +55,7 @@ if (env === 'production') {
     keep: 5
   });
   // Log to file on production
-  app.use(morgan(':timestamp - :remoteIp - :method :url :status ":referrer" ":user-agent" :response-time ms - :res[content-length]',
-  {stream: accessLogStream}));
+  app.use(morgan(':timestamp - :remoteIp - :method :url :status ":referrer" ":user-agent" :response-time ms - :res[content-length]', {stream: accessLogStream}));
   // Also log to the console on production
   app.use(morgan(`:timestamp - :remoteIp - :method :url :status :response-time ms - :res[content-length]`));
 } else if (env === 'development') {
