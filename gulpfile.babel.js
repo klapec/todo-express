@@ -13,6 +13,8 @@ const bs = browserSync.create();
 const production = process.env.NODE_ENV === 'production';
 
 let testServer;
+let backTestsResultCode;
+let frontTestsResultCode;
 
 const assetsPaths = {
   sass: 'assets/sass/',
@@ -101,9 +103,9 @@ gulp.task('scripts', () => {
     }));
 });
 
-gulp.task('test', ['test-server', 'test-frontend', 'test-backend'], () => {
+gulp.task('test', ['test-server', 'test-backend', 'test-frontend'], () => {
   testServer.kill();
-  return process.exit();
+  return process.exit(frontTestsResultCode === 1 || backTestsResultCode === 1 ? 1 : 0);
 });
 
 gulp.task('test-server', cb => {
@@ -114,21 +116,22 @@ gulp.task('test-server', cb => {
   }, 3000);
 });
 
-gulp.task('test-backend', ['test-frontend'], cb => {
-  return gulp.src('./tests/backend/*.js', { read: false })
-    .pipe($.mocha())
-    .once('error', () => {
-      cb();
-    });
-});
-
-gulp.task('test-frontend', ['test-server'], cb => {
-  exec('PHANTOMJS_EXECUTABLE=./node_modules/phantomjs/bin/phantomjs ./node_modules/.bin/mocha-casperjs tests/frontend/*.js; exit 0', (err, stdout, stderr) => {
-    if (err) {
-      return err;
-    }
+gulp.task('test-backend', ['test-server'], cb => {
+  exec('./node_modules/.bin/mocha --compilers js:babel-core/register --colors --timeout 10000 tests/backend/*.js', (err, stdout, stderr) => {
     gutil.log(stdout);
     gutil.log(stderr);
+
+    err ? backTestsResultCode = 1 : backTestsResultCode = 0;
+    cb();
+  });
+});
+
+gulp.task('test-frontend', ['test-backend'], cb => {
+  exec('./node_modules/.bin/mocha-casperjs tests/frontend/*.js', (err, stdout, stderr) => {
+    gutil.log(stdout);
+    gutil.log(stderr);
+
+    err ? frontTestsResultCode = 1 : frontTestsResultCode = 0;
     cb();
   });
 });

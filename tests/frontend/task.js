@@ -5,6 +5,7 @@ var newUser = (Math.random() * 30).toString().slice(3, 9) + '@gmail.com';
 
 describe('Frontend: ', function() {
   before('new user should be successfully created', function() {
+    casper.options.remoteScripts.push('http://cdn.polyfill.io/v1/polyfill.min.js?features=Promise');
     casper.start('http://localhost:3000/signup');
 
     casper.waitForSelector('form.auth-form', function() {
