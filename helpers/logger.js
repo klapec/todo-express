@@ -8,20 +8,20 @@ const infoPath = path.resolve('logs/messages.log');
 const env = process.env.NODE_ENV;
 const transports = [];
 
+function timestamp() {
+  return new Date().toISOString().slice(0, -5).split('T').join(' ');
+}
+
 if (env === 'production') {
   transports.push(
     new winston.transports.Console({
-      timestamp() {
-        return new Date().toGMTString();
-      },
+      timestamp,
       colorize: true
     }),
     new winston.transports.File({
       filename: infoPath,
       handleExceptions: true,
-      timestamp() {
-        return new Date().toGMTString();
-      },
+      timestamp,
       maxsize: 102400,
       maxFiles: 5,
       tailable: true,
