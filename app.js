@@ -39,6 +39,10 @@ db.on('error', err => {
   logger.error(`Error connecting to database: ${err}`);
 });
 
+morgan.token('timestamp', () => {
+  return new Date().toISOString().slice(0, -5).split('T').join(' ');
+});
+
 if (env === 'production') {
   const accessLogStream = logRotate({
     file: './logs/access.log',
@@ -46,13 +50,13 @@ if (env === 'production') {
     keep: 5
   });
   // Log to file on production
-  app.use(morgan(':date - :remote-addr :method :url :status ":referrer" ":user-agent" :response-time ms - :res[content-length]',
+  app.use(morgan(':timestamp - :remote-addr :method :url :status ":referrer" ":user-agent" :response-time ms - :res[content-length]',
   {stream: accessLogStream}));
   // Also log to the console on production
-  app.use(morgan(`:date - ${chalk.green(':method')}: :url :status :response-time ms - :res[content-length]`));
+  app.use(morgan(`:timestamp - :remote-addr - :method :url :status :response-time ms - :res[content-length]`));
 } else if (env === 'development') {
   // Only log to the console on development
-  app.use(morgan(`:date - ${chalk.green(':method')}: :url :status :response-time ms - :res[content-length]`));
+  app.use(morgan(`:timestamp - ${chalk.green(':method')}: :url :status :response-time ms - :res[content-length]`));
 }
 
 app.use(express.static('public'));
