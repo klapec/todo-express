@@ -5,6 +5,7 @@ import passport from 'passport';
 import session from 'express-session';
 import morgan from 'morgan';
 import logRotate from 'logrotate-stream';
+import requestIp from 'request-ip';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import exphbs from 'express-handlebars';
@@ -43,6 +44,10 @@ morgan.token('timestamp', () => {
   return new Date().toISOString().slice(0, -5).split('T').join(' ');
 });
 
+morgan.token('remoteIp', req => {
+  return requestIp.getClientIp(req);
+});
+
 if (env === 'production') {
   const accessLogStream = logRotate({
     file: './logs/access.log',
@@ -50,10 +55,10 @@ if (env === 'production') {
     keep: 5
   });
   // Log to file on production
-  app.use(morgan(':timestamp - :remote-addr :method :url :status ":referrer" ":user-agent" :response-time ms - :res[content-length]',
+  app.use(morgan(':timestamp - :remoteIp - :method :url :status ":referrer" ":user-agent" :response-time ms - :res[content-length]',
   {stream: accessLogStream}));
   // Also log to the console on production
-  app.use(morgan(`:timestamp - :remote-addr - :method :url :status :response-time ms - :res[content-length]`));
+  app.use(morgan(`:timestamp - :remoteIp - :method :url :status :response-time ms - :res[content-length]`));
 } else if (env === 'development') {
   // Only log to the console on development
   app.use(morgan(`:timestamp - ${chalk.green(':method')}: :url :status :response-time ms - :res[content-length]`));
