@@ -4,7 +4,8 @@ import User from '../../models/user';
 import logger from '../../helpers/logger';
 import { Strategy as LocalStrategy } from 'passport-local';
 
-export default new LocalStrategy({
+export default new LocalStrategy(
+  {
     passReqToCallback: true,
     usernameField: 'email',
     passwordField: 'password'

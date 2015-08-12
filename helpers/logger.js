@@ -9,7 +9,8 @@ const env = process.env.NODE_ENV;
 const transports = [];
 
 function timestamp() {
-  return new Date().toISOString().slice(0, -5).split('T').join(' ');
+  const now = new Date().toLocaleString();
+  return now.slice(4, 15) + ' ' + now.slice(16, -16);
 }
 
 if (env === 'production') {
@@ -32,9 +33,7 @@ if (env === 'production') {
   transports.push(
     new winston.transports.Console({
       level: 'info',
-      timestamp() {
-        return new Date().toGMTString();
-      },
+      timestamp,
       colorize: true
     })
   );
