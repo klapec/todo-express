@@ -1,14 +1,15 @@
-import fs from 'fs';
 import express from 'express';
 import mongoose from 'mongoose';
 import connectMongo from 'connect-mongo';
 import passport from 'passport';
 import session from 'express-session';
 import morgan from 'morgan';
+import logRotate from 'logrotate-stream';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import exphbs from 'express-handlebars';
 import flash from 'connect-flash';
+import chalk from 'chalk';
 import routes from './routes';
 import localStrategy from './config/passport/local';
 import User from './models/user';
@@ -39,14 +40,19 @@ db.on('error', err => {
 });
 
 if (env === 'production') {
-  const accessLogStream = fs.createWriteStream('./logs/access.log', {flags: 'a'});
-  // We're behind Nginx proxy on production
-  app.set('trust proxy', 1);
-  // Log HTTP requests to access.log
-  app.use(morgan('combined', {stream: accessLogStream}));
+  const accessLogStream = logRotate({
+    file: './logs/access.log',
+    size: '100k',
+    keep: 5
+  });
+  // Log to file on production
+  app.use(morgan(':date - :remote-addr :method :url :status ":referrer" ":user-agent" :response-time ms - :res[content-length]',
+  {stream: accessLogStream}));
+  // Also log to the console on production
+  app.use(morgan(`:date - ${chalk.green(':method')}: :url :status :response-time ms - :res[content-length]`));
 } else if (env === 'development') {
-  // Log HTTP requests to console on development
-  app.use(morgan('dev'));
+  // Only log to the console on development
+  app.use(morgan(`:date - ${chalk.green(':method')}: :url :status :response-time ms - :res[content-length]`));
 }
 
 app.use(express.static('public'));

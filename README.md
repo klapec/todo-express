@@ -14,7 +14,8 @@ Requires MongoDB. If it's not running locally (on `localhost:27017`) then the mo
 
 ## Testing
 
-Both client and server side tests can be run with `gulp test`.
+Both client and server side tests can be run with `npm test`.
+Frontend tests require PhantomJS installed globally.
 
 ## Example
 
