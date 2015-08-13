@@ -7,7 +7,7 @@ import browserSync from 'browser-sync';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
 import { exec } from 'child_process';
-import Server from './app';
+import Server from './server/server';
 
 const $ = gulpLoadPlugins();
 const bs = browserSync.create();
@@ -18,8 +18,8 @@ let backTestsResultCode;
 let frontTestsResultCode;
 
 const assetsPaths = {
-  sass: 'assets/sass/',
-  scripts: 'assets/scripts/'
+  sass: './client/sass/',
+  scripts: './client/scripts/'
 };
 
 function errorAlert(err) {
@@ -41,7 +41,7 @@ gulp.task('default', () => {
     });
   });
 
-  gulp.watch(['./*.js', './!(node_modules|public|tests|assets)/**/*.{js,html,hbs}', '!./gulpfile.babel.js'], () => {
+  gulp.watch(['./!(node_modules|client)/**/*.{js,html,hbs}'], () => {
     server.reconnect();
     server.once('connected', () => {
       bs.reload();
@@ -64,7 +64,7 @@ gulp.task('styles', () => {
     .pipe($.rename({
       suffix: '.min'
     }))
-    .pipe(gulp.dest('public/'))
+    .pipe(gulp.dest('client/public/'))
     .pipe(bs.stream());
 });
 
@@ -75,7 +75,7 @@ gulp.task('scripts', () => {
     .pipe(source('bundle.min.js'))
     .pipe($.if(production, buffer()))
     .pipe($.if(production, $.uglify()))
-    .pipe(gulp.dest('public/'))
+    .pipe(gulp.dest('client/public/'))
     .pipe(bs.stream());
 });
 
@@ -91,7 +91,7 @@ gulp.task('test-server', cb => {
 });
 
 gulp.task('test-backend', ['test-server'], cb => {
-  exec('./node_modules/.bin/mocha --compilers js:babel-core/register --colors --timeout 10000 tests/backend/*.js', (err, stdout, stderr) => {
+  exec('./node_modules/.bin/mocha --compilers js:babel-core/register --colors --timeout 10000 server/tests/*.js', (err, stdout, stderr) => {
     gutil.log(stdout);
     gutil.log(stderr);
 
@@ -101,7 +101,7 @@ gulp.task('test-backend', ['test-server'], cb => {
 });
 
 gulp.task('test-frontend', ['test-backend'], cb => {
-  exec('./node_modules/.bin/mocha-casperjs tests/frontend/*.js', (err, stdout, stderr) => {
+  exec('./node_modules/.bin/mocha-casperjs client/tests/*.js', (err, stdout, stderr) => {
     gutil.log(stdout);
     gutil.log(stderr);
 
