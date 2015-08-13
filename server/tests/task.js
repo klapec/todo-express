@@ -20,7 +20,7 @@ if (!mongoose.connection.name) {
   connect();
 }
 
-import '../../models/task';
+import '../models/task';
 
 const expect = chai.expect;
 const Task = mongoose.model('Task');
