@@ -188,9 +188,7 @@ describe('Frontend: ', function() {
         casper.mouse.doubleclick('.task-list__item__name');
         this.waitForSelector('.task-list__item--edit', function() {
           expect('.task-list__item--edit').to.be.inDOM.and.be.visible;
-
           this.sendKeys('.task-list__item--edit', ' edited');
-          this.sendKeys('.task-list__item--edit', casper.page.event.key.Enter);
           this.waitWhileSelector('.task-list__item--edit', function() {
             expect('.task-list__item__name').to.have.text('test task 5 edited');
           });

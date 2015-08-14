@@ -18,9 +18,6 @@
       {{#each tasks}}
       <li class="task-list__item {{#if completed}}completed{{/if}}" data-id="{{_id}}">
           <div class="task-list__item--view">
-            <!-- The reason this is a span and not a checkbox input
-            is that styling input elements is rather quirky
-            on non-webkit browsers -->
             <span class="task-list__item__toggle {{#if completed}}checked{{/if}}"></span>
             <label class="task-list__item__name">{{name}}</label>
             <button class="task-list__item__delete"></button>
