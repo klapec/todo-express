@@ -1,6 +1,7 @@
 import gulp from 'gulp';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import gutil from 'gulp-util';
+import domain from 'domain';
 import babelify from 'babelify';
 import browserify from 'browserify';
 import browserSync from 'browser-sync';
@@ -22,12 +23,7 @@ const assetsPaths = {
   scripts: './client/scripts/'
 };
 
-function errorAlert(err) {
-  $.notify.onError({
-    title: 'Gulp Error',
-    message: 'Check the terminal',
-    sound: 'Basso'
-  })(err);
+function errorHandler(err) {
   gutil.log(gutil.colors.red(err.toString()));
   this.emit('end');
 }
@@ -53,9 +49,9 @@ gulp.task('default', () => {
 
 gulp.task('styles', () => {
   return gulp.src(assetsPaths.sass + 'app.scss')
-    .pipe($.plumber({ errorHandler: errorAlert }))
+    .pipe($.plumber({ errorHandler }))
     .pipe($.sass({
-      precision: 4
+      precision: 10
     }))
     .pipe($.autoprefixer({
       browsers: ['last 2 versions', 'Android >= 4']
@@ -68,15 +64,28 @@ gulp.task('styles', () => {
     .pipe(bs.stream());
 });
 
+// Error handling in browserify in gulp:
+// http://latviancoder.com/story/error-handling-browserify-gulp
 gulp.task('scripts', () => {
-  return browserify(assetsPaths.scripts + 'app.js')
-    .transform(babelify)
-    .bundle()
-    .pipe(source('bundle.min.js'))
-    .pipe($.if(production, buffer()))
-    .pipe($.if(production, $.uglify()))
-    .pipe(gulp.dest('client/public/'))
-    .pipe(bs.stream());
+  return gulp.src(assetsPaths.scripts + 'app.js', {read: false})
+    .pipe($.tap(file => {
+      const d = domain.create();
+
+      d.on('error', errorHandler);
+
+      d.run(function() {
+        file.contents = browserify({
+          entries: [file.path]
+        })
+        .transform(babelify)
+        .bundle()
+        .pipe(source('bundle.min.js'))
+        .pipe($.if(production, buffer()))
+        .pipe($.if(production, $.uglify()))
+        .pipe(gulp.dest('client/public/'))
+        .pipe(bs.stream());
+      });
+    }));
 });
 
 gulp.task('test', ['test-server', 'test-backend', 'test-frontend'], () => {
