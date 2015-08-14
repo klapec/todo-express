@@ -7,13 +7,16 @@ import browserify from 'browserify';
 import browserSync from 'browser-sync';
 import source from 'vinyl-source-stream';
 import buffer from 'vinyl-buffer';
-import { exec } from 'child_process';
+import { exec, fork } from 'child_process';
 import Server from './server/server';
 
 const $ = gulpLoadPlugins();
 const bs = browserSync.create();
 const production = process.env.NODE_ENV === 'production';
-const server = new Server();
+// Instantiating server object for running tests
+const testingServer = new Server();
+// This will hold a reference to the spawned development server
+let server;
 
 let backTestsResultCode;
 let frontTestsResultCode;
@@ -28,20 +31,52 @@ function errorHandler(err) {
   this.emit('end');
 }
 
-gulp.task('default', () => {
-  server.connect();
-  server.once('connected', () => {
-    bs.init({
-      proxy: 'http://localhost:3000',
-      port: 4000
+// Spawning development server
+function createServer() {
+  return new Promise((resolve, reject) => {
+    // Spawns a separate node process with the app server
+    // 'color' flag for Chalk
+    server = fork('app.js', ['--color']);
+    // Listens for a message from the child process
+    // which sends it via `process.send`
+    server.on('message', message => {
+      // Resolves if the server has been successfully started
+      if (message.event === 'connected') {
+        resolve();
+      } else if (message.event === 'error-mongo') {
+        reject(message.event);
+      } else if (message.event === 'error-express') {
+        reject(message.event);
+      }
     });
   });
+}
 
-  gulp.watch(['./!(node_modules|client)/**/*.{js,html,hbs}'], () => {
-    server.reconnect();
-    server.once('connected', () => {
-      bs.reload();
+gulp.task('default', () => {
+  createServer()
+    .then(() => {
+      // If the server has been successfully started, run browser-sync
+      bs.init({
+        proxy: 'http://localhost:3000',
+        port: 4000
+      });
+    })
+    .catch(err => {
+      throw new Error(err);
     });
+
+  // If any of the watched files changes - kill the spawned server
+  // and create a new process
+  // (so that the server has been completely refreshed)
+  gulp.watch(['./!(node_modules|client)/**/*.{js,html,hbs}'], () => {
+    server.kill('SIGTERM');
+    createServer()
+      .then(() => {
+        bs.reload();
+      })
+      .catch(err => {
+        throw new Error(err);
+      });
   });
   gulp.watch(assetsPaths.sass + '**/*', ['styles']);
   gulp.watch(assetsPaths.scripts + '*', ['scripts']);
@@ -93,8 +128,10 @@ gulp.task('test', ['test-server', 'test-backend', 'test-frontend'], () => {
 });
 
 gulp.task('test-server', cb => {
-  server.connect();
-  server.on('connected', () => {
+  // Create an instance of the Server object
+  // We don't need to restart the server on testing
+  testingServer.connect();
+  testingServer.on('connected', () => {
     cb();
   });
 });
@@ -104,6 +141,9 @@ gulp.task('test-backend', ['test-server'], cb => {
     gutil.log(stdout);
     gutil.log(stderr);
 
+    // Indicate whether tests ended with an error (status code 1)
+    // or without any errors (status code 0)
+    // This gets passed to process.exit
     err ? backTestsResultCode = 1 : backTestsResultCode = 0;
     cb();
   });

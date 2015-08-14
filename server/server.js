@@ -146,36 +146,21 @@ export default class Server extends EventEmitter {
   }
 
   connect() {
-    if (!this.mongooseConnection.name) {
-      mongoose.connect(mongoUri, () => {
-        logger.info('Connected to the database');
-      });
-    }
-
-    this.server = app.listen(port, ipAddress, () => {
+    this.server = app.listen(port, ipAddress, err => {
+      if (err) {
+        logger.error('Error creating Express server: ', err);
+        return this.emit('error-express');
+      }
       logger.info(`Server listening on port: ${port}`);
       logger.info(`Environment: ${env}`);
+    });
+    mongoose.connect(mongoUri, err => {
+      if (err) {
+        logger.error('Error connecting to the database: ', err);
+        return this.emit('error-mongo');
+      }
+      logger.info('Connected to the database');
       this.emit('connected');
-    });
-  }
-
-  disconnect() {
-    this.server.close(() => {
-      logger.info('Server stopped');
-      this.emit('disconnected');
-    });
-
-    mongoose.disconnect(() => {
-      logger.info('Disconnected from the database');
-    });
-  }
-
-  reconnect() {
-    this.server.close(() => {
-      logger.info('Server stopped');
-      this.emit('disconnected');
-
-      this.connect();
     });
   }
 }
