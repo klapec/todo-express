@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import { fork } from 'child_process';
 import express from 'express';
 import mongoose from 'mongoose';
 import connectMongo from 'connect-mongo';
@@ -44,7 +45,7 @@ if (env === 'production') {
   // Log to file on production
   app.use(morgan(':timestamp - :remoteIp - :method :url :status ":referrer" ":user-agent" :response-time ms - :res[content-length]', {stream: accessLogStream}));
   // Also log to the console on production
-  app.use(morgan(`:timestamp - :remoteIp - :method :url :status :response-time ms - :res[content-length]`));
+  app.use(morgan(`:timestamp - :remoteIp - ${chalk.green(':method')}: :url :status :response-time ms - :res[content-length]`));
 } else if (env === 'development') {
   // Only log to the console on development
   app.use(morgan(`:timestamp - ${chalk.green(':method')}: :url :status :response-time ms - :res[content-length]`));
@@ -142,25 +143,53 @@ export default class Server extends EventEmitter {
     super();
 
     this.server;
-    this.mongooseConnection = mongoose.connection;
   }
 
   connect() {
     this.server = app.listen(port, ipAddress, err => {
       if (err) {
-        logger.error('Error creating Express server: ', err);
+        logger.error(`Error creating Express server: ${err}`);
         return this.emit('error-express');
       }
-      logger.info(`Server listening on port: ${port}`);
-      logger.info(`Environment: ${env}`);
+      logger.info(chalk.green(`Server running on port: ${port}`));
+      logger.info(chalk.green(`Environment: ${chalk.blue(`${env}`)}`));
     });
     mongoose.connect(mongoUri, err => {
       if (err) {
-        logger.error('Error connecting to the database: ', err);
+        logger.error(`Error connecting to the database: ${err}`);
         return this.emit('error-mongo');
       }
-      logger.info('Connected to the database');
+      logger.info(chalk.green('Connected to the database'));
       this.emit('connected');
     });
+  }
+
+  // Spawn the server in a separate node process
+  spawn() {
+    return new Promise((resolve, reject) => {
+      // Color flag for Chalk
+      this.server = fork('app.js', ['--color']);
+      this.server.on('message', message => {
+        if (message.event === 'connected') {
+          resolve();
+        } else if (message.event === 'error-mongo') {
+          reject(message.event);
+        } else if (message.event === 'error-express') {
+          reject(message.event);
+        }
+      });
+    });
+  }
+
+  kill() {
+    // If server was opened with #connect, close Express connection
+    if (this.server._connectionKey) {
+      this.server.close();
+    // Otherwise the server was spawned, kill it
+    } else {
+      this.server.kill();
+    }
+
+    logger.info(chalk.red('Server has been stopped'));
   }
 }
