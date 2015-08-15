@@ -1,3 +1,5 @@
+/* eslint react/sort-comp: 0 */
+
 const qs = (selector, scope) => {
   return (scope || document).querySelector(selector);
 };
@@ -54,7 +56,7 @@ export default class View {
     this.taskCounter = qs('.task-counter');
     this.clearCompleted = qs('.clear-completed');
 
-    this.oldValCache = '';
+    this.oldValueCache = '';
   }
 
   itemId(element) {
@@ -67,7 +69,12 @@ export default class View {
   }
 
   itemCounter(completed) {
-    const tasksCompleted = qsa('.completed');
+    const tasksCompleted = [];
+
+    Array.prototype.forEach.call(qsa('.completed'), v => {
+      tasksCompleted.push(v.dataset.id);
+    });
+
     const number = this.taskList.children.length - tasksCompleted.length;
     const plural = number === 1 ? '' : 's';
 
@@ -96,88 +103,94 @@ export default class View {
   bind(event, handler) {
     const self = this;
 
-    if (event === 'init') {
-      on(document, 'DOMContentLoaded', function() {
-        self.render('init');
-      });
-    }
+    const events = {
+      init() {
+        on(document, 'DOMContentLoaded', function() {
+          self.render('init');
+        });
+      },
 
-    if (event === 'addTask') {
-      on(self.addTaskInput, 'keypress', function(e) {
-        if (e.keyCode === self.ENTER_KEY) {
-          const title = this.value;
-          handler({ title });
-        }
-      });
+      addTask() {
+        on(self.addTaskInput, 'keypress', function(e) {
+          if (e.keyCode === self.ENTER_KEY) {
+            handler({ title: this.value });
+          }
+        });
 
-      on(self.addTaskButton, ['mouseup', 'keypress'], function() {
-        const title = self.addTaskInput.value;
-        handler({ title });
-      });
-    }
+        on(self.addTaskButton, ['mouseup', 'keypress'], function() {
+          handler({ title: self.addTaskInput.value });
+        });
+      },
 
-    if (event === 'editTask') {
-      delegate(self.taskList, '.task-list__item__name', 'dblclick', function() {
-        self.render('editTask', {id: self.itemId(this)});
-      });
+      editTask() {
+        delegate(self.taskList, '.task-list__item__name', 'dblclick', function() {
+          self.render('editTask', {id: self.itemId(this)});
+        });
+      },
 
-    } else if (event === 'editTaskDone') {
-      delegate(self.taskList, '.task-list__item--edit', 'blur', function() {
-        if (!this.dataset.iscanceled) {
+      editTaskDone() {
+        delegate(self.taskList, '.task-list__item--edit', 'blur', function() {
+          if (!this.dataset.iscanceled) {
+            handler({
+              id: self.itemId(this),
+              title: this.value,
+              oldVal: self.oldValueCache
+            });
+          }
+        });
+
+        delegate(self.taskList, '.task-list__item--edit', 'keypress', function(e) {
+          if (e.keyCode === self.ENTER_KEY) {
+            this.blur();
+          }
+        });
+      },
+
+      editTaskCancel() {
+        delegate(self.taskList, '.task-list__item--edit', 'keyup', function(e) {
+          if (e.keyCode === self.ESCAPE_KEY) {
+            this.dataset.iscanceled = true;
+            this.blur();
+
+            self.render('editTaskDone', {
+              id: self.itemId(this),
+              title: self.oldValueCache
+            });
+          }
+        });
+      },
+
+      removeTask() {
+        delegate(self.taskList, '.task-list__item__delete', 'click', function() {
+          handler({id: self.itemId(this)});
+        });
+      },
+
+      toggleTask() {
+        delegate(self.taskList, '.task-list__item__toggle', 'click', function() {
+          let checked;
+          if (this.className.search(/checked/) !== -1) {
+            checked = false;
+            this.className = 'task-list__item__toggle';
+          } else {
+            checked = true;
+            this.className += ' checked';
+          }
           handler({
             id: self.itemId(this),
-            title: this.value,
-            oldVal: self.oldValCache
+            completed: checked
           });
-        }
-      });
-
-      delegate(self.taskList, '.task-list__item--edit', 'keypress', function(e) {
-        if (e.keyCode === self.ENTER_KEY) {
-          this.blur();
-        }
-      });
-
-    } else if (event === 'editTaskCancel') {
-      delegate(self.taskList, '.task-list__item--edit', 'keyup', function(event) {
-        if (event.keyCode === self.ESCAPE_KEY) {
-          this.dataset.iscanceled = true;
-          this.blur();
-
-          self.render('editTaskDone', {
-            id: self.itemId(this),
-            title: self.oldValCache
-          });
-        }
-      });
-
-    } else if (event === 'removeTask') {
-      delegate(self.taskList, '.task-list__item__delete', 'click', function() {
-        handler({id: self.itemId(this)});
-      });
-
-    } else if (event === 'toggleTask') {
-      delegate(self.taskList, '.task-list__item__toggle', 'click', function() {
-        let checked;
-        if (this.className.search(/checked/) !== -1) {
-          checked = false;
-          this.className = 'task-list__item__toggle';
-        } else {
-          checked = true;
-          this.className += ' checked';
-        }
-        handler({
-          id: self.itemId(this),
-          completed: checked
         });
-      });
+      },
 
-    } else if (event === 'removeCompleted') {
-      on(self.clearCompleted, 'click', function() {
-        const completed = self.itemCounter(true);
-        handler({completed});
-      });
-    }
+      removeCompleted() {
+        on(self.clearCompleted, 'click', function() {
+          handler({completed: self.itemCounter(true)});
+        });
+      }
+    };
+
+    events[event]();
   }
 
   render(cmd, opts = { id: '' }) {
@@ -209,7 +222,7 @@ export default class View {
 
         const taskListItem = document.createElement('li');
         taskListItem.className = 'task-list__item';
-        taskListItem.dataset.id = opts.id;
+        taskListItem.dataset.id = opts.id ? opts.id : '';
         const taskListItemView = document.createElement('div');
         taskListItemView.className = 'task-list__item--view';
         taskListItem.appendChild(taskListItemView);
@@ -228,16 +241,29 @@ export default class View {
         self.itemCounter();
       },
 
+      updateTaskId() {
+        const taskListItems = qsa('.task-list__item');
+        let itemToUpdate;
+
+        Array.prototype.forEach.call(taskListItems, (v, i) => {
+          if (qs('label', taskListItems[i]).textContent === opts.title) {
+            itemToUpdate = v;
+          }
+        });
+
+        itemToUpdate.dataset.id = opts.id;
+      },
+
       editTask() {
         const input = document.createElement('input');
-        const currVal = qs('label', listItem).textContent;
-        self.oldValCache = currVal;
+        const currentValue = qs('label', listItem).textContent;
+        self.oldValueCache = currentValue;
 
         listItem.className = listItem.className + ' editing';
         input.className = 'task-list__item--edit';
         listItem.appendChild(input);
         input.focus();
-        input.value = currVal;
+        input.value = currentValue;
       },
 
       editTaskDone() {

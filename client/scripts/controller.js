@@ -5,8 +5,8 @@ export default class Controller {
   }
 
   bindAll() {
-    // Checking if the task-list element exists === we're on /tasks
-    if (this.view.taskList) {
+    // Checking if we're on the tasks page
+    if (window.location.pathname === '/tasks') {
       this.view.bind('init');
       this.view.bind('addTask', args => {
         this.addTask(args.title);
@@ -34,37 +34,31 @@ export default class Controller {
       return;
     }
 
-    // Sends the task title to the model
-    // receives task id and title from the DB if the request was successful
+    this.view.render('addTask', { title });
+
     this.model.create(title)
       .then(response => {
+        // update the ID
         const res = JSON.parse(response);
-        this.view.render('addTask', {
-          id: res.id,
-          title
+        this.view.render('updateTaskId', {
+          title,
+          id: res.id
         });
-      }, error => {
-        this.view.render('addTask', {
-          err: error
-        });
+      }, err => {
+        // display an error
+        this.view.render('addTask', { err, title });
       });
   }
 
   // Invoked when the editing has finished
   editTaskDone(id, title, oldVal) {
     // Checks if the input isn't empty and if it actually changed
-    if (title.trim() && title !== oldVal) {
+    if (title.trim() !== '' && title !== oldVal) {
+      this.view.render('editTaskDone', { id, title });
+
       this.model.update(id, { title })
-        .then(response => {
-          const res = JSON.parse(response);
-          this.view.render('editTaskDone', {
-            id: res.id,
-            title: res.title
-          });
-        }, error => {
-          this.view.render('editTaskDone', {
-            err: error
-          });
+        .catch(err => {
+          this.view.render('editTaskDone', { err, id, title, oldVal });
         });
     // Otherwise returns the old value to the View
     } else {
@@ -75,52 +69,25 @@ export default class Controller {
   // Used to remove either singular tasks by their id
   // or multiple completed tasks
   removeTask(args) {
-    let query = '';
+    const query = args.completed ? args.completed.join('&') : args.id;
 
-    // Checks whether the args object has a completed property
-    // which would indicate that we want to remove multiple
-    // completed tasks
-    if (args.completed) {
-      const arr = [];
-      Array.prototype.forEach.call(args.completed, v => {
-        // Pushes ids of the completed tasks to an array
-        arr.push(v.dataset.id);
-      });
-      // Stringifies the array into a query, separating array items
-      // with an ampersand
-      query = arr.join('&');
-    // Otherwise, we wan't to remove a single task
-    } else {
-      query = args.id;
-    }
+    // removeTask expects an array, so we wrap the id string in an array
+    this.view.render('removeTask', { query: args.id ? [args.id] : args.completed });
 
     this.model.remove(query)
-      .then(response => {
-        const res = JSON.parse(response);
-        this.view.render('removeTask', {
-          query: res.query
-        });
-      }, error => {
-        this.view.render('removeTask', {
-          err: error
-        });
+      .catch(err => {
+        this.view.render('removeTask', { err, args });
       });
   }
 
   // Toggles the completed parameter of a task
   // which can be either true or false
   toggleTask(id, completed) {
+    this.view.render('toggleTask', { id, completed });
+
     this.model.update(id, { completed })
-      .then(response => {
-        const res = JSON.parse(response);
-        this.view.render('toggleTask', {
-          id: res.id,
-          completed: res.completed
-        });
-      }, error => {
-        this.view.render('toggleTask', {
-          err: error
-        });
+      .catch( err => {
+        this.view.render('toggleTask', { err, id, completed });
       });
   }
 }
