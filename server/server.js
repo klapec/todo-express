@@ -52,7 +52,7 @@ if (env === 'production') {
 }
 
 if (runningOnOpenshift) {
-  app.enable('trust proxy');
+  app.enable('trust proxy', 1);
 
   // Redirect to https
   app.use((req, res, next) => {
@@ -91,14 +91,16 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(cookieParser());
+app.use(cookieParser(pkg.name));
 app.use(session({
   name: 'session',
   resave: false,
   saveUninitialized: false,
   secret: pkg.name,
   cookie: {
-    maxAge: 86400000 // 24 hours
+    httpOnly: runningOnOpenshift ? true : false,
+    maxAge: 86400000, // 24 hours
+    secure: runningOnOpenshift ? true : false
   },
   store: new MongoStore({
     mongooseConnection: mongoose.connection, // Reuse existing connection
