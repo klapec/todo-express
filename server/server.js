@@ -98,7 +98,7 @@ app.use(session({
   saveUninitialized: false,
   secret: pkg.name,
   cookie: {
-    httpOnly: runningOnOpenshift ? false : true,
+    httpOnly: true,
     maxAge: 86400000, // 24 hours
     secure: runningOnOpenshift ? true : false
   },
