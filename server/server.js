@@ -51,6 +51,21 @@ if (env === 'production') {
   app.use(morgan(`:timestamp - ${chalk.green(':method')}: :url :status :response-time ms - :res[content-length]`));
 }
 
+if (runningOnOpenshift) {
+  app.enable('trust proxy');
+
+  // Redirect to https
+  app.use((req, res, next) => {
+    if (req.secure) {
+      // request was via https, so do no special handling
+      next();
+    } else {
+      // request was via http, so redirect to https
+      res.redirect('https://' + req.hostname + req.url);
+    }
+  });
+}
+
 app.use(express.static('client/public'));
 
 app.engine('hbs', exphbs({
