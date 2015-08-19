@@ -5,8 +5,14 @@ import userCtrl from './controllers/userCtrl';
 import taskCtrl from './controllers/taskCtrl';
 import auth from './middleware/auth';
 
+const runningOnOpenshift = process.env.OPENSHIFT_EXAMPLE || false;
 const routes = router();
-const csrfProtection = csrf({ cookie: true });
+const csrfProtection = csrf({
+  cookie: {
+    httpOnly: true,
+    secure: runningOnOpenshift ? true : false
+  }
+});
 
 routes.use((req, res, next) => {
   res.locals.req = req;
