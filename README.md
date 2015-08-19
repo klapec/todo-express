@@ -19,4 +19,4 @@ Frontend tests require PhantomJS installed globally.
 
 ## Example
 
-[todoexpress-klapec.rhcloud.com/](http://todoexpress-klapec.rhcloud.com/)
+[todo.andrzejklapec.pl/](https://todo.andrzejklapec.pl/)
